@@ -11,7 +11,7 @@ export const searchLocations = async (query) => {
   }
 };
 
-// Get all locations
+// Get all locations with filters
 export const getAllLocations = async (filters = {}) => {
   try {
     const params = new URLSearchParams(filters).toString();
@@ -23,13 +23,13 @@ export const getAllLocations = async (filters = {}) => {
   }
 };
 
-// Get single location
-export const getLocation = async (id) => {
+// Get locations by floor
+export const getLocationsByFloor = async (building, floor) => {
   try {
-    const response = await api.get(`/navigation/locations/${id}`);
+    const response = await api.get(`/navigation/locations?building=${building}&floor=${floor}`);
     return response.data;
   } catch (error) {
-    console.error('Get location error:', error);
+    console.error('Get locations by floor error:', error);
     throw error;
   }
 };
@@ -41,17 +41,6 @@ export const findPath = async (startId, endId) => {
     return response.data;
   } catch (error) {
     console.error('Find path error:', error);
-    throw error;
-  }
-};
-
-// Get nearby locations
-export const getNearbyLocations = async (locationId, radius = 50) => {
-  try {
-    const response = await api.get(`/navigation/nearby?locationId=${locationId}&radius=${radius}`);
-    return response.data;
-  } catch (error) {
-    console.error('Get nearby error:', error);
     throw error;
   }
 };

@@ -1,8 +1,15 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '../config';
 
-// Create axios instance
+// For Android Emulator
+const API_URL = 'http://192.168.82.166:5000/api';
+
+// For Physical Device - replace with your computer's IP
+// Find your IP: Windows (ipconfig), Mac (ifconfig | grep inet)
+// const API_URL = 'http://192.168.1.XXX:5000/api';
+
+// For iOS Simulator
+// const API_URL = 'http://localhost:5000/api';
+
 const api = axios.create({
   baseURL: API_URL,
   timeout: 10000,
@@ -10,32 +17,5 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
-// Add token to requests automatically
-api.interceptors.request.use(
-  async (config) => {
-    const token = await AsyncStorage.getItem('userToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Handle response errors
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      // Token expired, logout user
-      await AsyncStorage.removeItem('userToken');
-      // Navigate to login (we'll implement this later)
-    }
-    return Promise.reject(error);
-  }
-);
 
 export default api;

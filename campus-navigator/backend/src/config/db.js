@@ -1,4 +1,8 @@
 const mongoose = require('mongoose');
+async function resetDatabase() {
+  await mongoose.connection.dropDatabase();
+  console.log('Database dropped');
+}
 
 const connectDB = async () => {
   try {
