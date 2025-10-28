@@ -72,6 +72,7 @@ Package Manager: npm
 
 📁 Project Structure
 campus-navigator/
+```plaintext
 │
 ├── backend/                    # Backend Node.js application
 │   ├── src/
@@ -115,6 +116,7 @@ campus-navigator/
 │   └── package.json
 │
 └── README.md                   # You are here!
+```
 
 ✅ Prerequisites
 Before you begin, ensure you have the following installed:
