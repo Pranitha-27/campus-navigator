@@ -14,7 +14,7 @@ exports.searchLocations = async (req, res) => {
     }
 
     const locations = await Location.search(query);
-    const limited = locations.slice(0, 10);
+    const limited = locations.slice(0, 20);
 
     res.json({
       success: true,

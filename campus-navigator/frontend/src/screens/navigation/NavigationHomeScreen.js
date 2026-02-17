@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,12 +10,17 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { COLORS, SPACING } from '../../config';
-import { searchLocations } from '../../services/navigationService';
+import { searchLocations, seedFirestore } from '../../services/navigationService';
 
 export default function NavigationHomeScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // ⚠️ TEMPORARY — remove after seeing "✅ Seeded 19 locations" in terminal
+  useEffect(() => {
+    seedFirestore();
+  }, []);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -86,15 +91,16 @@ export default function NavigationHomeScreen({ navigation }) {
         <FlatList
           data={results}
           renderItem={renderLocationItem}
-          keyExtractor={(item) => item._id}
+          // ✅ Firebase uses 'id' not '_id'
+          keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
         />
-      ) : searchQuery ? (
+      ) : searchQuery && !loading ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyIcon}>🔍</Text>
           <Text style={styles.emptyText}>No locations found</Text>
           <Text style={styles.emptySubtext}>
-            Try searching for "BOT Lab", "IoT Lab", or "Cafeteria"
+            Try searching for "Lab", "IoT", or "Cafeteria"
           </Text>
         </View>
       ) : (
@@ -111,27 +117,15 @@ export default function NavigationHomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-  },
+  container: { flex: 1, backgroundColor: COLORS.white },
   header: {
     padding: SPACING.lg,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.lightGray,
   },
-  backButton: {
-    marginBottom: SPACING.sm,
-  },
-  backText: {
-    fontSize: 18,
-    color: COLORS.primary,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: COLORS.black,
-  },
+  backButton: { marginBottom: SPACING.sm },
+  backText: { fontSize: 18, color: COLORS.primary },
+  title: { fontSize: 28, fontWeight: 'bold', color: COLORS.black },
   searchContainer: {
     flexDirection: 'row',
     padding: SPACING.lg,
@@ -153,12 +147,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  searchButtonText: {
-    fontSize: 24,
-  },
-  listContainer: {
-    padding: SPACING.lg,
-  },
+  searchButtonText: { fontSize: 24 },
+  listContainer: { padding: SPACING.lg },
   locationCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -181,55 +171,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: SPACING.md,
   },
-  locationIconText: {
-    fontSize: 24,
-  },
-  locationInfo: {
-    flex: 1,
-  },
+  locationIconText: { fontSize: 24 },
+  locationInfo: { flex: 1 },
   locationName: {
     fontSize: 18,
     fontWeight: '600',
     color: COLORS.black,
     marginBottom: 4,
   },
-  locationDetails: {
-    fontSize: 14,
-    color: COLORS.gray,
-  },
-  arrow: {
-    fontSize: 24,
-    color: COLORS.gray,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: SPACING.md,
-    fontSize: 16,
-    color: COLORS.gray,
-  },
+  locationDetails: { fontSize: 14, color: COLORS.gray },
+  arrow: { fontSize: 24, color: COLORS.gray },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  loadingText: { marginTop: SPACING.md, fontSize: 16, color: COLORS.gray },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: SPACING.xl,
   },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: SPACING.md,
-  },
+  emptyIcon: { fontSize: 64, marginBottom: SPACING.md },
   emptyText: {
     fontSize: 20,
     fontWeight: '600',
     color: COLORS.black,
     marginBottom: SPACING.sm,
   },
-  emptySubtext: {
-    fontSize: 16,
-    color: COLORS.gray,
-    textAlign: 'center',
-  },
+  emptySubtext: { fontSize: 16, color: COLORS.gray, textAlign: 'center' },
 });
