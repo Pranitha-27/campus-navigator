@@ -1,37 +1,30 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const connectDB = require('./config/db');
+const dotenv = require('dotenv');
+
+// Load environment variables
+dotenv.config();
+
+// Initialize Firebase (replaces MongoDB connection)
+const { admin, db } = require('./config/firebase');
+console.log('✅ Firebase initialized successfully');
 
 const app = express();
-
-// Connect to MongoDB
-connectDB();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
-app.get('/', (req, res) => {
+const navigationRoutes = require('./routes/navigation');
+app.use('/api/navigation', navigationRoutes);
+
+// Health check
+app.get('/api/health', (req, res) => {
   res.json({ 
-    message: 'Campus Navigator API',
-    version: '1.0.0',
-    endpoints: {
-      navigation: '/api/navigation'
-    }
-  });
-});
-
-app.use('/api/navigation', require('./routes/navigation'));
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    success: true, 
+    message: 'Server is running',
+    database: 'Firebase Firestore'
   });
 });
 

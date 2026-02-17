@@ -13,14 +13,13 @@ exports.searchLocations = async (req, res) => {
       });
     }
 
-    const locations = await Location.find({
-      $text: { $search: query }
-    }).limit(10);
+    const locations = await Location.search(query);
+    const limited = locations.slice(0, 10);
 
     res.json({
       success: true,
-      count: locations.length,
-      data: locations
+      count: limited.length,
+      data: limited
     });
   } catch (error) {
     res.status(500).json({
@@ -41,8 +40,19 @@ exports.getAllLocations = async (req, res) => {
     if (floor) filter.floor = parseInt(floor);
     if (type) filter.type = type;
 
-    const locations = await Location.find(filter)
-      .populate('connectedTo.locationId');
+    const locations = await Location.find(filter);
+
+    // Populate connectedTo locations if needed
+    for (let location of locations) {
+      if (location.connectedTo && location.connectedTo.length > 0) {
+        for (let connection of location.connectedTo) {
+          if (connection.locationId) {
+            const connectedLoc = await Location.findById(connection.locationId);
+            connection.locationData = connectedLoc;
+          }
+        }
+      }
+    }
 
     res.json({
       success: true,
@@ -61,14 +71,23 @@ exports.getAllLocations = async (req, res) => {
 // Get single location by ID
 exports.getLocation = async (req, res) => {
   try {
-    const location = await Location.findById(req.params.id)
-      .populate('connectedTo.locationId');
+    const location = await Location.findById(req.params.id);
 
     if (!location) {
       return res.status(404).json({
         success: false,
         message: 'Location not found'
       });
+    }
+
+    // Populate connectedTo locations
+    if (location.connectedTo && location.connectedTo.length > 0) {
+      for (let connection of location.connectedTo) {
+        if (connection.locationId) {
+          const connectedLoc = await Location.findById(connection.locationId);
+          connection.locationData = connectedLoc;
+        }
+      }
     }
 
     res.json({
@@ -97,7 +116,19 @@ exports.findPath = async (req, res) => {
     }
 
     // Get all locations to build graph
-    const locations = await Location.find().populate('connectedTo.locationId');
+    const locations = await Location.find();
+    
+    // Populate all connections
+    for (let location of locations) {
+      if (location.connectedTo && location.connectedTo.length > 0) {
+        for (let connection of location.connectedTo) {
+          if (connection.locationId) {
+            const connectedLoc = await Location.findById(connection.locationId);
+            connection.locationData = connectedLoc;
+          }
+        }
+      }
+    }
     
     const pathFinder = new PathFinder(locations);
     const result = pathFinder.findPath(startId, endId);
@@ -135,16 +166,17 @@ exports.getNearbyLocations = async (req, res) => {
       });
     }
 
-    // Find locations on same floor within radius
+    // Find locations on same floor
     const nearbyLocations = await Location.find({
-      _id: { $ne: locationId },
       building: location.building,
       floor: location.floor,
       isAccessible: true
     });
 
-    // Filter by distance
+    // Filter by distance and exclude the current location
     const filtered = nearbyLocations.filter(loc => {
+      if (loc.id === locationId) return false;
+      
       const dx = loc.coordinates.x - location.coordinates.x;
       const dy = loc.coordinates.y - location.coordinates.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
