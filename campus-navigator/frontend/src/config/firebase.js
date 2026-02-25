@@ -3,14 +3,13 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDpNWCrnkvt8RNz10leQPRE2VyxDnlxa7M",
-  authDomain: "campus-navigator-fbd98.firebaseapp.com",
-  projectId: "campus-navigator-fbd98",
-  storageBucket: "campus-navigator-fbd98.firebasestorage.app",
-  messagingSenderId: "303146270835",
-  appId: "1:303146270835:web:84ffb7b91beeefc4c16a06",
-  measurementId: "G-9CW03B0PZ8",
+  apiKey: "AIzaSyBMj1sFCI5P0pQVMrvODyJjZvCEMjWMS5k",
+  authDomain: "campus-navigator-7b651.firebaseapp.com",
+  projectId: "campus-navigator-7b651",
+  storageBucket: "campus-navigator-7b651.firebasestorage.app",
+  messagingSenderId: "655884400108",
+  appId: "1:655884400108:web:d4a1fd0b843e280d0e7cc9",
+  measurementId: "G-LCEHKX34QT",
 };
-
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);

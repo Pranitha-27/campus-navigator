@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // For Android Emulator
-const API_URL = 'http://192.168.0.148:5000/api';
+const API_URL = 'http://192.168.29.3:5000/api';
 
 // For Physical Device - replace with your computer's IP
 // Find your IP: Windows (ipconfig), Mac (ifconfig | grep inet)

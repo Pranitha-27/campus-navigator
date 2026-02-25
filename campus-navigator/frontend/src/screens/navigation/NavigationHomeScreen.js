@@ -1,3 +1,5 @@
+// NavigationHomeScreen.js - UPDATED
+
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -8,30 +10,74 @@ import {
   FlatList,
   SafeAreaView,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { COLORS, SPACING } from '../../config';
-import { searchLocations, seedFirestore } from '../../services/navigationService';
+import { searchLocations, getAllLocations } from '../../services/navigationService';
 
 export default function NavigationHomeScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
-  // ⚠️ TEMPORARY — remove after seeing "✅ Seeded 19 locations" in terminal
+  // ✅ Load all locations on screen mount
   useEffect(() => {
-    seedFirestore();
+    loadAllLocations();
   }, []);
 
+  const loadAllLocations = async () => {
+    setLoading(true);
+    try {
+      console.log('📊 Loading all locations...');
+      const response = await getAllLocations();
+      console.log('📊 All locations response:', response);
+      
+      if (response.success) {
+        setResults(response.data || []);
+        console.log(`✅ Loaded ${response.data?.length || 0} locations`);
+        
+        // Log first few location names for debugging
+        response.data?.slice(0, 3).forEach(loc => {
+          console.log('  -', loc.name);
+        });
+      }
+    } catch (error) {
+      console.error('❌ Load all error:', error);
+      Alert.alert('Error', 'Failed to load locations: ' + error.message);
+    } finally {
+      setLoading(false);
+      setInitialized(true);
+    }
+  };
+
   const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {
+      // Empty search = show all
+      loadAllLocations();
+      return;
+    }
 
     setLoading(true);
     try {
+      console.log('🔍 Searching for:', searchQuery);
       const response = await searchLocations(searchQuery);
-      setResults(response.data || []);
+      
+      console.log('📊 Search response:', response);
+      console.log('📊 Results count:', response?.data?.length);
+      
+      if (response.success) {
+        setResults(response.data || []);
+        if (response.data?.length === 0) {
+          console.log('⚠️ No results found. Try: "Lab", "IoT", "AI", "Floor", "Kevin"');
+        }
+      } else {
+        setResults([]);
+      }
     } catch (error) {
-      alert('Error searching locations. Please try again.');
-      console.error(error);
+      console.error('❌ Search error:', error);
+      Alert.alert('Search Error', error.message || 'Failed to search locations');
+      setResults([]);
     } finally {
       setLoading(false);
     }
@@ -51,6 +97,9 @@ export default function NavigationHomeScreen({ navigation }) {
           {item.building} • Floor {item.floor}
           {item.roomNumber ? ` • Room ${item.roomNumber}` : ''}
         </Text>
+        {item.tags && item.tags.length > 0 && (
+          <Text style={styles.tags}>🏷️ {item.tags.slice(0, 2).join(', ')}</Text>
+        )}
       </View>
       <Text style={styles.arrow}>›</Text>
     </TouchableOpacity>
@@ -71,11 +120,12 @@ export default function NavigationHomeScreen({ navigation }) {
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search for labs, rooms, or locations..."
+          placeholder="Search: Lab, IoT, AI, Floor 5..."
           value={searchQuery}
           onChangeText={setSearchQuery}
           onSubmitEditing={handleSearch}
           returnKeyType="search"
+          clearButtonMode="while-editing"
         />
         <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
           <Text style={styles.searchButtonText}>🔍</Text>
@@ -85,33 +135,37 @@ export default function NavigationHomeScreen({ navigation }) {
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styles.loadingText}>Searching...</Text>
+          <Text style={styles.loadingText}>Loading locations...</Text>
         </View>
       ) : results.length > 0 ? (
-        <FlatList
-          data={results}
-          renderItem={renderLocationItem}
-          // ✅ Firebase uses 'id' not '_id'
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-        />
-      ) : searchQuery && !loading ? (
+        <>
+          <View style={styles.resultsHeader}>
+            <Text style={styles.resultsCount}>
+              {results.length} location{results.length !== 1 ? 's' : ''} found
+            </Text>
+            {searchQuery.trim() === '' && (
+              <Text style={styles.showingAll}>Showing all</Text>
+            )}
+          </View>
+          <FlatList
+            data={results}
+            renderItem={renderLocationItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContainer}
+          />
+        </>
+      ) : !loading ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyIcon}>🔍</Text>
           <Text style={styles.emptyText}>No locations found</Text>
           <Text style={styles.emptySubtext}>
-            Try searching for "Lab", "IoT", or "Cafeteria"
+            Try searching for:{"\n"}"Lab", "IoT", "AI", "Floor", "Kevin", "501"
           </Text>
+          <TouchableOpacity style={styles.showAllButton} onPress={loadAllLocations}>
+            <Text style={styles.showAllButtonText}>Show All Locations</Text>
+          </TouchableOpacity>
         </View>
-      ) : (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyIcon}>🗺️</Text>
-          <Text style={styles.emptyText}>Start searching</Text>
-          <Text style={styles.emptySubtext}>
-            Search for any lab or location on campus
-          </Text>
-        </View>
-      )}
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -148,6 +202,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchButtonText: { fontSize: 24 },
+  resultsHeader: {
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: COLORS.lightGray,
+  },
+  resultsCount: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.gray,
+  },
+  showingAll: {
+    fontSize: 12,
+    color: COLORS.primary,
+    fontStyle: 'italic',
+  },
   listContainer: { padding: SPACING.lg },
   locationCard: {
     flexDirection: 'row',
@@ -179,7 +251,8 @@ const styles = StyleSheet.create({
     color: COLORS.black,
     marginBottom: 4,
   },
-  locationDetails: { fontSize: 14, color: COLORS.gray },
+  locationDetails: { fontSize: 14, color: COLORS.gray, marginBottom: 2 },
+  tags: { fontSize: 12, color: COLORS.primary, marginTop: 2 },
   arrow: { fontSize: 24, color: COLORS.gray },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: SPACING.md, fontSize: 16, color: COLORS.gray },
@@ -196,5 +269,22 @@ const styles = StyleSheet.create({
     color: COLORS.black,
     marginBottom: SPACING.sm,
   },
-  emptySubtext: { fontSize: 16, color: COLORS.gray, textAlign: 'center' },
+  emptySubtext: {
+    fontSize: 14,
+    color: COLORS.gray,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  showAllButton: {
+    marginTop: SPACING.lg,
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+    borderRadius: 8,
+  },
+  showAllButtonText: {
+    color: COLORS.white,
+    fontWeight: '600',
+    fontSize: 16,
+  },
 });

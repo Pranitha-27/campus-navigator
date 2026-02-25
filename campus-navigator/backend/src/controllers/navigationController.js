@@ -1,26 +1,33 @@
-const Location = require('../models/Location');
+const db = require('../config/firebase');
 const PathFinder = require('../utils/pathfinding');
 
 // Search for locations
 exports.searchLocations = async (req, res) => {
   try {
     const { query } = req.query;
-    
+
     if (!query) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Search query is required' 
+      return res.status(400).json({
+        success: false,
+        message: 'Search query is required'
       });
     }
 
-    const locations = await Location.search(query);
-    const limited = locations.slice(0, 20);
+    const snapshot = await db.collection('locations').get();
+
+    const locations = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(loc =>
+        loc.name?.toLowerCase().includes(query.toLowerCase())
+      )
+      .slice(0, 20);
 
     res.json({
       success: true,
-      count: limited.length,
-      data: limited
+      count: locations.length,
+      data: locations
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -30,35 +37,22 @@ exports.searchLocations = async (req, res) => {
   }
 };
 
-// Get all locations (for map display)
+// Get all locations
 exports.getAllLocations = async (req, res) => {
   try {
-    const { building, floor, type } = req.query;
-    
-    let filter = {};
-    if (building) filter.building = building;
-    if (floor) filter.floor = parseInt(floor);
-    if (type) filter.type = type;
+    const snapshot = await db.collection('locations').get();
 
-    const locations = await Location.find(filter);
-
-    // Populate connectedTo locations if needed
-    for (let location of locations) {
-      if (location.connectedTo && location.connectedTo.length > 0) {
-        for (let connection of location.connectedTo) {
-          if (connection.locationId) {
-            const connectedLoc = await Location.findById(connection.locationId);
-            connection.locationData = connectedLoc;
-          }
-        }
-      }
-    }
+    const locations = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
 
     res.json({
       success: true,
       count: locations.length,
       data: locations
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -68,32 +62,25 @@ exports.getAllLocations = async (req, res) => {
   }
 };
 
-// Get single location by ID
+// Get single location
 exports.getLocation = async (req, res) => {
   try {
-    const location = await Location.findById(req.params.id);
+    const doc = await db.collection('locations')
+      .doc(req.params.id)
+      .get();
 
-    if (!location) {
+    if (!doc.exists) {
       return res.status(404).json({
         success: false,
         message: 'Location not found'
       });
     }
 
-    // Populate connectedTo locations
-    if (location.connectedTo && location.connectedTo.length > 0) {
-      for (let connection of location.connectedTo) {
-        if (connection.locationId) {
-          const connectedLoc = await Location.findById(connection.locationId);
-          connection.locationData = connectedLoc;
-        }
-      }
-    }
-
     res.json({
       success: true,
-      data: location
+      data: { id: doc.id, ...doc.data() }
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -115,21 +102,12 @@ exports.findPath = async (req, res) => {
       });
     }
 
-    // Get all locations to build graph
-    const locations = await Location.find();
-    
-    // Populate all connections
-    for (let location of locations) {
-      if (location.connectedTo && location.connectedTo.length > 0) {
-        for (let connection of location.connectedTo) {
-          if (connection.locationId) {
-            const connectedLoc = await Location.findById(connection.locationId);
-            connection.locationData = connectedLoc;
-          }
-        }
-      }
-    }
-    
+    const snapshot = await db.collection('locations').get();
+    const locations = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
     const pathFinder = new PathFinder(locations);
     const result = pathFinder.findPath(startId, endId);
 
@@ -144,6 +122,7 @@ exports.findPath = async (req, res) => {
       success: true,
       data: result
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -158,28 +137,34 @@ exports.getNearbyLocations = async (req, res) => {
   try {
     const { locationId, radius = 50 } = req.query;
 
-    const location = await Location.findById(locationId);
-    if (!location) {
+    const doc = await db.collection('locations')
+      .doc(locationId)
+      .get();
+
+    if (!doc.exists) {
       return res.status(404).json({
         success: false,
         message: 'Location not found'
       });
     }
 
-    // Find locations on same floor
-    const nearbyLocations = await Location.find({
-      building: location.building,
-      floor: location.floor,
-      isAccessible: true
-    });
+    const location = { id: doc.id, ...doc.data() };
 
-    // Filter by distance and exclude the current location
-    const filtered = nearbyLocations.filter(loc => {
+    const snapshot = await db.collection('locations').get();
+    const allLocations = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    const filtered = allLocations.filter(loc => {
       if (loc.id === locationId) return false;
-      
+      if (loc.building !== location.building) return false;
+      if (loc.floor !== location.floor) return false;
+
       const dx = loc.coordinates.x - location.coordinates.x;
       const dy = loc.coordinates.y - location.coordinates.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
+
       return distance <= radius;
     });
 
@@ -188,6 +173,7 @@ exports.getNearbyLocations = async (req, res) => {
       count: filtered.length,
       data: filtered
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,

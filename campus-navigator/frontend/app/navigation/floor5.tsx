@@ -5,9 +5,10 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
+
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import api from '../../src/services/api';
 
@@ -30,11 +31,33 @@ export default function Floor5Screen() {
   const router = useRouter();
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
+  
   useEffect(() => {
     loadFloor5Locations();
   }, []);
+  
 
+// 👇 ADD THIS BELOW IT
+useEffect(() => {
+  if (searchQuery.trim() === '') {
+    loadFloor5Locations();   // show all when empty
+  } else {
+    searchLocations(searchQuery);   // filter when typing
+  }
+}, [searchQuery]);
+const searchLocations = async (query) => {
+  try {
+    const response = await api.get(`/navigation/search?query=${query}`);
+    if (response.data.success) {
+      setLocations(response.data.data);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+ 
   const loadFloor5Locations = async () => {
     try {
       const response = await api.get('/navigation/locations?building=BSN Block&floor=5');
@@ -79,7 +102,7 @@ export default function Floor5Screen() {
       <FlatList
         data={locations}
         renderItem={renderLocation}
-        keyExtractor={(item: any) => item._id}
+        keyExtractor={(item: any) => item.id}
         contentContainerStyle={styles.list}
       />
     </SafeAreaView>
