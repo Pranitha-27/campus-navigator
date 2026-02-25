@@ -19,15 +19,14 @@ export default function NavigationHomeScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Seed safely first, then load locations
+    // Seed Firestore safely (no duplicates) then load locations
     const init = async () => {
-      await seedFirestoreSafely(); // safe: no duplicates
+      await seedFirestoreSafely();
       await loadAllLocations();
     };
     init();
   }, []);
 
-  // Remove duplicates by ID just in case
   const removeDuplicates = (locations) => {
     const map = new Map();
     locations.forEach(l => {
@@ -61,9 +60,7 @@ export default function NavigationHomeScreen({ navigation }) {
     setLoading(true);
     try {
       const response = await searchLocations(searchQuery);
-      if (response.success) {
-        setResults(removeDuplicates(response.data));
-      }
+      if (response.success) setResults(removeDuplicates(response.data));
     } catch (error) {
       console.error(error);
       Alert.alert('Search Error', error.message || 'Failed to search locations');
@@ -123,21 +120,13 @@ export default function NavigationHomeScreen({ navigation }) {
           <ActivityIndicator size="large" color={COLORS.primary} />
           <Text style={styles.loadingText}>Loading locations...</Text>
         </View>
-      ) : results.length > 0 ? (
+      ) : (
         <FlatList
           data={results}
           renderItem={renderLocationItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
         />
-      ) : (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyIcon}>🔍</Text>
-          <Text style={styles.emptyText}>No locations found</Text>
-          <TouchableOpacity style={styles.showAllButton} onPress={loadAllLocations}>
-            <Text style={styles.showAllButtonText}>Show All Locations</Text>
-          </TouchableOpacity>
-        </View>
       )}
     </SafeAreaView>
   );
@@ -164,9 +153,4 @@ const styles = StyleSheet.create({
   arrow: { fontSize: 24, color: COLORS.gray },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: SPACING.md, fontSize: 16, color: COLORS.gray },
-  emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: SPACING.xl },
-  emptyIcon: { fontSize: 64, marginBottom: SPACING.md },
-  emptyText: { fontSize: 20, fontWeight: '600', color: COLORS.black, marginBottom: SPACING.sm },
-  showAllButton: { marginTop: SPACING.lg, backgroundColor: COLORS.primary, paddingHorizontal: SPACING.lg, paddingVertical: SPACING.md, borderRadius: 8 },
-  showAllButtonText: { color: COLORS.white, fontWeight: '600', fontSize: 16 },
 });

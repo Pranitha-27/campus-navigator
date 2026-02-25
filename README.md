@@ -1,414 +1,480 @@
-🗺️ Campus Navigator
-A smart navigation and seat booking system for college campuses. Navigate to any lab or location and book seats in cafeteria/bakery with real-time availability.
+# **Campus Navigator - Smart Indoor Navigation System**
 
-📋 Table of Contents
+---
 
-Features
-Tech Stack
-Project Structure
-Prerequisites
-Installation
-Configuration
-Running the Application
-API Documentation
-Contributing
-License
+## 📱 **About**
 
+Campus Navigator is an intelligent indoor navigation system designed for college campuses. Find any lab, classroom, cafeteria, or location on campus with precision pathfinding, real-time search, and QR code integration.
 
-✨ Features
-🧭 Indoor Navigation
+### **Why Campus Navigator?**
 
-Find any lab/room in college buildings
-Turn-by-turn directions
-Multiple positioning methods (QR codes, BLE beacons, Wi-Fi)
-Search functionality for quick location access
-Visual floor plans with real-time navigation
+- 🗺️ **Never get lost** - Navigate through complex campus buildings effortlessly
+- ⚡ **Real-time search** - Find any location instantly
+- 🎯 **Smart pathfinding** - Get the shortest route to your destination
+- 📱 **QR Navigation** - Scan codes to discover and navigate to locations
+- 🏫 **Multi-building support** - Works across your entire campus
 
-🪑 Seat Booking System
+---
 
-Real-time seat availability (like BookMyShow)
-Book tables/seats in cafeteria and bakery
-Visual seat selection interface
-Time-limited bookings with auto-release
-QR code check-in system
-Booking history and management
+## ✨ **Features**
 
-🎯 Additional Features
+### **Core Navigation**
+- 🧭 **Indoor Navigation** - Turn-by-turn directions inside buildings
+- 🔍 **Smart Search** - Find labs, classrooms, cafeterias, and more
+- 📍 **Location Details** - View complete information about any campus location
+- 🗺️ **Interactive Maps** - Visual floor plans and building layouts
+- 🎯 **Pathfinding Algorithm** - Optimized routes considering stairs, elevators, and corridors
 
-Multi-building support
-Nearby locations discovery
-Popular locations tracking
-User-friendly mobile interface
-Push notifications for bookings
+### **Smart Features**
+- 📱 **QR Code Integration** - Instant navigation from scanned codes
+- 🏢 **Multi-floor Navigation** - Seamless routing across different floors
+- 🔖 **Location Tags** - Filter by lab, classroom, landmark, etc.
+- ♿ **Accessibility Support** - Wheelchair-friendly route options
+- 📊 **Building Information** - Floor numbers, room numbers, descriptions
 
+### **Coming Soon** 🚀
+- 🥽 **AR Navigation** - Augmented reality directions
+- 🔥 **Live Crowd Heatmap** - Real-time occupancy tracking
+- 📅 **Class Schedule Integration** - Auto-navigation to your next class
+- 🚨 **Emergency SOS** - One-tap emergency alerts
+- 👥 **Social Navigation** - See where your friends are
+- 🗣️ **Voice Guidance** - Hands-free navigation
+- 🎮 **Gamification** - Campus exploration challenges
 
-🛠️ Tech Stack
-Backend
+---
 
-Runtime: Node.js (v18+)
-Framework: Express.js
-Database: MongoDB (MongoDB Atlas)
-ODM: Mongoose
-Authentication: JWT (JSON Web Tokens)
-Real-time: Socket.io
-Environment: dotenv
+## 🛠️ **Tech Stack**
 
-Frontend
+### **Frontend**
+- **React Native** - Cross-platform mobile development
+- **Expo** - Development platform and tooling
+- **React Navigation** - Screen navigation and routing
+- **Axios** - API communication
 
-Framework: React Native (Expo)
-Navigation: React Navigation
-State Management: React Context API / Redux
-HTTP Client: Axios
-UI Components: React Native Paper / Native Base
-Maps: Leaflet.js / Custom SVG
+### **Backend**
+- **Node.js** - Server runtime
+- **Express.js** - Web framework
+- **Firebase Firestore** - Real-time NoSQL database
+- **Firebase Admin SDK** - Backend Firebase integration
 
-DevOps & Tools
+### **Tools & Services**
+- **Git** - Version control
+- **npm** - Package management
+- **Nodemon** - Development auto-reload
+- **Dotenv** - Environment configuration
 
-Version Control: Git & GitHub
-API Testing: Thunder Client / Postman
-Code Editor: VS Code
-Package Manager: npm
+---
 
+## 📦 **Installation**
 
-📁 Project Structure
-campus-navigator/
-```plaintext
-│
-├── backend/                    # Backend Node.js application
-│   ├── src/
-│   │   ├── config/            # Configuration files
-│   │   │   └── db.js          # MongoDB connection
-│   │   ├── models/            # Mongoose schemas
-│   │   │   ├── User.js
-│   │   │   ├── Location.js
-│   │   │   ├── Booking.js
-│   │   │   └── Table.js
-│   │   ├── routes/            # API routes
-│   │   │   ├── auth.js
-│   │   │   ├── navigation.js
-│   │   │   └── booking.js
-│   │   ├── controllers/       # Request handlers
-│   │   │   ├── authController.js
-│   │   │   ├── navigationController.js
-│   │   │   └── bookingController.js
-│   │   ├── middleware/        # Custom middleware
-│   │   │   └── auth.js
-│   │   ├── utils/             # Helper functions
-│   │   │   └── pathfinding.js
-│   │   └── server.js          # Entry point
-│   ├── .env                   # Environment variables
-│   ├── .gitignore
-│   └── package.json
-│
-├── frontend/                   # React Native mobile app
-│   ├── src/
-│   │   ├── screens/           # App screens
-│   │   │   ├── auth/
-│   │   │   ├── navigation/
-│   │   │   └── booking/
-│   │   ├── components/        # Reusable components
-│   │   ├── services/          # API services
-│   │   ├── navigation/        # Navigation config
-│   │   ├── context/           # Global state
-│   │   └── utils/             # Utilities
-│   ├── assets/                # Images, fonts, etc.
-│   ├── App.js
-│   └── package.json
-│
-└── README.md                   # You are here!
+### **Prerequisites**
+- Node.js (v16 or higher)
+- npm or yarn
+- Expo CLI
+- Firebase account
+- Android Studio / Xcode (for emulators)
+
+### **1. Clone the Repository**
+```bash
+git clone https://github.com/YOUR_USERNAME/campus-navigator.git
+cd campus-navigator
 ```
 
-✅ Prerequisites
-Before you begin, ensure you have the following installed:
+### **2. Backend Setup**
 
-Node.js (v18 or higher) - Download
-npm (comes with Node.js)
-Git - Download
-MongoDB Atlas Account (free tier) - Sign up
-Expo Go app on your phone - Android | iOS
-
-Optional:
-
-VS Code - Download
-Android Studio or Xcode (for production builds)
-
-
-🚀 Installation
-1. Clone the Repository
-bashgit clone https://github.com/yourusername/campus-navigator.git
-cd campus-navigator
-2. Backend Setup
-bash# Navigate to backend folder
+```bash
+# Navigate to backend folder
 cd backend
 
 # Install dependencies
 npm install
 
 # Create .env file
-cp .env.example .env
-# Edit .env with your MongoDB connection string
-3. Frontend Setup
-bash# Navigate to frontend folder (from root)
-cd ../frontend
+touch .env
+```
+
+**Configure `.env` file:**
+```env
+PORT=5000
+NODE_ENV=development
+FIREBASE_PROJECT_ID=your-project-id
+```
+
+**Add Firebase Service Account:**
+1. Go to Firebase Console: https://console.firebase.google.com
+2. Project Settings → Service Accounts
+3. Generate new private key
+4. Save as `serviceAccountKey.json` in `backend/` folder
+
+**Start backend server:**
+```bash
+npm run dev
+```
+
+Backend should be running on `http://localhost:5000`
+
+### **3. Frontend Setup**
+
+```bash
+# Navigate to frontend folder (open new terminal)
+cd frontend
 
 # Install dependencies
 npm install
+```
 
-# Or if using Expo
-npx expo install
+**Configure API URL:**
 
-⚙️ Configuration
-Backend Configuration
-Create a .env file in the backend/ directory:
-env# Server Configuration
-PORT=5000
-NODE_ENV=development
+Open `frontend/src/services/navigationService.js` and update:
+```javascript
+const API_URL = 'http://YOUR_IP_ADDRESS:5000/api';
+// For Android emulator: http://10.0.2.2:5000/api
+// For physical device: http://192.168.x.x:5000/api
+```
 
-# MongoDB Configuration
-MONGODB_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/campus-navigator?retryWrites=true&w=majority
-
-# JWT Secret (change this to a random string)
-JWT_SECRET=your_super_secret_jwt_key_here_change_this
-
-# JWT Expiration
-JWT_EXPIRE=7d
-Frontend Configuration
-Create a config.js file in frontend/src/:
-javascriptexport const API_URL = 'http://localhost:5000/api';
-// For testing on physical device, use your computer's IP:
-// export const API_URL = 'http://192.168.1.100:5000/api';
-MongoDB Atlas Setup
-
-Create account at MongoDB Atlas
-Create a new cluster (free tier M0)
-Create database user with password
-Whitelist your IP address (or allow 0.0.0.0/0 for development)
-Get connection string and add to .env
-
-
-🏃 Running the Application
-Start Backend Server
-bash# From backend directory
-cd backend
-
-# Development mode (with auto-reload)
-npm run dev
-
-# Production mode
-npm start
-Expected output:
-✅ MongoDB connected successfully
-🚀 Server running on port 5000
-📍 Environment: development
-Start Frontend App
-bash# From frontend directory
-cd frontend
-
-# Start Expo development server
+**Start Expo development server:**
+```bash
 npx expo start
+```
 
-# Or
-npm start
-Then:
+Press `a` for Android or `i` for iOS
 
-Scan QR code with Expo Go app (Android/iOS)
-Or press a for Android emulator
-Or press i for iOS simulator (Mac only)
+---
 
+## 🔥 **Firebase Setup**
 
-📡 API Documentation
-Base URL
-http://localhost:5000/api
-Navigation Endpoints
-Search Locations
-httpGET /navigation/search?query=BOT Lab
-Response:
-json{
+### **1. Create Firebase Project**
+1. Go to Firebase Console: https://console.firebase.google.com
+2. Click "Add Project"
+3. Enter project name (e.g., "Campus Navigator")
+4. Follow setup wizard
+
+### **2. Enable Firestore Database**
+1. Click "Firestore Database" in sidebar
+2. Click "Create database"
+3. Start in **test mode** (for development)
+4. Choose location closest to you
+5. Click "Enable"
+
+### **3. Set Firestore Rules (Development)**
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+```
+
+**WARNING:** Change rules for production with proper authentication
+
+### **4. Add Sample Data**
+
+Run the seed script:
+```bash
+cd backend
+node src/utils/addSampleData.js
+```
+
+Or manually add to Firestore:
+- Collection: `locations`
+- Add documents with fields:
+  - `name`: "IoT Lab"
+  - `type`: "lab"
+  - `building`: "BSN Block"
+  - `floor`: 5
+  - `coordinates`: `{x: 100, y: 200, z: 0}`
+  - `tags`: `["lab", "iot"]`
+
+---
+
+## 🎮 **Usage**
+
+### **Search for Locations**
+1. Open the app
+2. Tap on "Navigate Campus"
+3. Type location name (e.g., "IoT Lab", "Cafeteria")
+4. Tap on search result
+
+### **View Location Details**
+- See building name, floor, room number
+- View description and amenities
+- Check accessibility information
+
+### **Navigate to Location**
+1. Search and select your destination
+2. Tap "Navigate" (coming soon)
+3. Follow turn-by-turn directions
+
+### **Scan QR Codes**
+1. Tap QR scanner icon
+2. Point camera at campus QR code
+3. Automatically navigate to location
+
+---
+
+## 📁 **Project Structure**
+
+```
+campus-navigator/
+├── backend/
+│   ├── src/
+│   │   ├── config/
+│   │   │   ├── firebase.js          # Firebase configuration
+│   │   │   └── db.js                # Database (deprecated)
+│   │   ├── models/
+│   │   │   └── Location.js          # Location data model
+│   │   ├── controllers/
+│   │   │   └── navigationController.js  # API logic
+│   │   ├── routes/
+│   │   │   └── navigation.js        # API routes
+│   │   ├── utils/
+│   │   │   ├── pathfinding.js       # A* algorithm
+│   │   │   └── seedData.js          # Sample data script
+│   │   └── server.js                # Express server
+│   ├── .env                         # Environment variables
+│   ├── serviceAccountKey.json       # Firebase credentials
+│   └── package.json
+│
+└── frontend/
+    ├── src/
+    │   ├── screens/
+    │   │   ├── HomeScreen.js           # Landing page
+    │   │   └── navigation/
+    │   │       ├── NavigationHomeScreen.js  # Search & list
+    │   │       └── LocationDetail.js        # Location info
+    │   ├── navigation/
+    │   │   └── AppNavigator.js        # Route configuration
+    │   ├── services/
+    │   │   └── navigationService.js   # API calls
+    │   └── config/
+    │       └── index.js               # App configuration
+    ├── App.js
+    ├── app.json                       # Expo config
+    └── package.json
+```
+
+---
+
+## 🔌 **API Endpoints**
+
+### **Base URL:** `http://localhost:5000/api`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/navigation/search?query=lab` | Search locations |
+| GET | `/navigation/locations` | Get all locations |
+| GET | `/navigation/locations/:id` | Get location by ID |
+| GET | `/navigation/path?startId=X&endId=Y` | Find path between locations |
+| GET | `/navigation/nearby?locationId=X&radius=50` | Get nearby locations |
+| GET | `/health` | Server health check |
+
+### **Example Requests**
+
+**Search for locations:**
+```bash
+GET http://localhost:5000/api/navigation/search?query=lab
+```
+
+**Response:**
+```json
+{
   "success": true,
-  "count": 1,
+  "count": 3,
   "data": [
     {
-      "_id": "...",
-      "name": "BOT Lab",
+      "id": "abc123",
+      "name": "IoT Lab",
+      "type": "lab",
       "building": "BSN Block",
-      "floor": 1,
-      "roomNumber": "101"
+      "floor": 5,
+      "roomNumber": "TR 501"
     }
   ]
 }
-Get All Locations
-httpGET /navigation/locations?building=BSN Block&floor=1
-Find Path Between Locations
-httpGET /navigation/path?startId=location1_id&endId=location2_id
-Response:
-json{
-  "success": true,
-  "data": {
-    "path": [...],
-    "distance": 45.5,
-    "steps": [
-      {
-        "from": "Main Entrance",
-        "to": "BOT Lab",
-        "instruction": "Walk 25m to BOT Lab",
-        "distance": 25
-      }
-    ]
-  }
-}
-Booking Endpoints
-Get Available Tables
-httpGET /booking/tables?location=cafeteria
-Book a Table
-httpPOST /booking/book
-Content-Type: application/json
+```
 
-{
-  "tableId": "table_01",
-  "duration": 45
-}
-My Bookings
-httpGET /booking/my-bookings
-Authorization: Bearer <token>
+---
 
-🧪 Testing
-Test Backend API
-Using Thunder Client (VS Code Extension):
+## 🚀 **Deployment**
 
-Install Thunder Client extension
-Import API collection (coming soon)
-Test endpoints
+### **Backend (Node.js)**
+Deploy to platforms like:
+- **Heroku** - `git push heroku main`
+- **Railway** - Connect GitHub repo
+- **Render** - Auto-deploy from Git
+- **Google Cloud Run** - Containerized deployment
+- **AWS Elastic Beanstalk** - Managed platform
 
-Using cURL:
-bash# Test server
-curl http://localhost:5000
+### **Frontend (React Native)**
+Build for:
+- **Android:** `eas build --platform android`
+- **iOS:** `eas build --platform ios`
+- **Web:** `expo export:web`
 
-# Search locations
-curl http://localhost:5000/api/navigation/search?query=lab
+---
 
-# Get all locations
-curl http://localhost:5000/api/navigation/locations
-Test Frontend
-bash# Run on physical device
-npx expo start --tunnel
+## 🤝 **Contributing**
 
-# Run on Android emulator
-npx expo start --android
+We welcome contributions! Here's how:
 
-# Run on iOS simulator (Mac only)
-npx expo start --ios
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. **Commit your changes**
+   ```bash
+   git commit -m "Add amazing feature"
+   ```
+4. **Push to branch**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+5. **Open a Pull Request**
 
-🗂️ Database Schema
-Location Schema
-javascript{
-  name: String,           // "BOT Lab"
-  type: String,           // "room" | "building" | "landmark"
-  building: String,       // "BSN Block"
-  floor: Number,          // 1
-  roomNumber: String,     // "101"
-  coordinates: {
-    x: Number,
-    y: Number,
-    z: Number
-  },
-  connectedTo: [{
-    locationId: ObjectId,
-    distance: Number,
-    pathType: String
-  }]
-}
-Booking Schema
-javascript{
-  userId: ObjectId,
-  tableId: ObjectId,
-  startTime: Date,
-  endTime: Date,
-  status: String,         // "active" | "completed" | "cancelled"
-  arrived: Boolean
-}
+---
 
-🤝 Contributing
-Contributions are welcome! Please follow these steps:
+## 📝 **Development Roadmap**
 
-Fork the repository
-Create a new branch (git checkout -b feature/amazing-feature)
-Commit your changes (git commit -m 'Add amazing feature')
-Push to the branch (git push origin feature/amazing-feature)
-Open a Pull Request
+### **Phase 1: Core Navigation** ✅ COMPLETED
+- [x] Indoor navigation system
+- [x] Location search
+- [x] Pathfinding algorithm
+- [x] Firebase integration
+- [x] Multi-floor support
 
+### **Phase 2: Smart Features** 🚧 IN PROGRESS
+- [ ] AR Navigation
+- [ ] Live crowd heatmap
+- [ ] Class schedule integration
+- [ ] QR code scanning
+- [ ] Voice guidance
 
-📝 Development Roadmap
-Phase 1: Core Navigation ✅
+### **Phase 3: Social & Safety** 📅 PLANNED
+- [ ] Social navigation
+- [ ] Emergency SOS
+- [ ] Friend tracking
+- [ ] Safe route suggestions
 
- Backend setup
- MongoDB connection
- Location model
- Pathfinding algorithm
- Sample data population
- API testing
+### **Phase 4: Gamification** 💡 FUTURE
+- [ ] Campus exploration challenges
+- [ ] Achievement badges
+- [ ] Leaderboards
+- [ ] Daily quests
 
-Phase 2: Booking System
+---
 
- Table/seat models
- Booking logic
- Real-time updates
- QR code system
+## 🐛 **Known Issues**
 
-Phase 3: Frontend Mobile App
+- Firebase warning on first load (resolves after database initialization)
+- Location search requires exact matches (fuzzy search coming soon)
+- Pathfinding doesn't account for elevator wait times
+- Network error if backend not running
 
- Basic UI screens
- Navigation interface
- Booking interface
- API integration
+---
 
-Phase 4: Advanced Features
+## 🔧 **Troubleshooting**
 
- Push notifications
- BLE beacon support
- Analytics dashboard
- Admin panel
+### **Backend Issues**
 
+**Problem: "Cannot find module 'serviceAccountKey.json'"**
+- **Solution:** Download Firebase service account key and place in backend folder
 
-🐛 Known Issues
+**Problem: "Database '(default)' not found"**
+- **Solution:** Enable Firestore in Firebase Console
 
- Pathfinding needs optimization for large campuses
- iOS camera permissions need better handling
- Booking timeout edge cases
+### **Frontend Issues**
 
+**Problem: "Network Error" when searching**
+- **Solution:** Check API_URL in navigationService.js
+- Ensure backend is running
+- Use correct IP address (not localhost for physical devices)
 
-📞 Support
-For support and queries:
+**Problem: "No locations found"**
+- **Solution:** Add sample data to Firestore using seed script
 
-Email: your.email@college.edu
-Project Issues: GitHub Issues
+---
 
+## 📄 **License**
 
-👥 Team
+This project is licensed under the MIT License.
 
-Your Name - Full Stack Developer
-Add team members here
+```
+MIT License
 
+Copyright (c) 2026 Campus Navigator Team
 
-🙏 Acknowledgments
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-MongoDB Atlas for database hosting
-Expo for React Native development platform
-OpenStreetMap for indoor mapping concepts
-College administration for support
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
-📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+---
 
-🔒 Security
-Please report security vulnerabilities to: security@yourdomain.com
+## 👥 **Team**
 
-Made with ❤️ for making campus navigation easier!
+**Developers:**
+- Pranitha - Backend & Firebase Integration
+- Shreya - Frontend Development
 
-📸 Screenshots
-Coming soon...
+---
 
-🎥 Demo Video
-Coming soon...
+## 📧 **Contact & Support**
 
-Last Updated: October 2025
+For questions, feedback, or support:
+- **GitHub Issues:** Report bugs or request features
+- **Email:** campusnavigator@example.com
+- **Documentation:** See wiki for detailed guides
+
+---
+
+## 🙏 **Acknowledgments**
+
+- Firebase team for real-time database platform
+- React Native community for mobile framework
+- Expo team for development tools
+- A* pathfinding algorithm researchers
+- Open source contributors
+
+---
+
+## 📊 **Project Stats**
+
+- **Languages:** JavaScript, JSX
+- **Framework:** React Native (Expo)
+- **Backend:** Node.js + Express
+- **Database:** Firebase Firestore
+- **Development Time:** Ongoing
+- **Current Version:** 1.0.0
+
+---
+
+## 🔗 **Useful Links**
+
+- **Firebase Console:** https://console.firebase.google.com
+- **Expo Documentation:** https://docs.expo.dev
+- **React Native Docs:** https://reactnative.dev
+- **Node.js:** https://nodejs.org
+
+---
+
+**Made with ❤️ for smarter campus navigation**
+
+**⭐ Star this repo if you find it helpful!**
