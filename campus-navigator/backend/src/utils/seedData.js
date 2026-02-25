@@ -1,37 +1,16 @@
-console.log('🚀 Starting seed script...');
-
-
-const mongoose = require('mongoose');
-
-
-async function seedDatabase() {
-  try {
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
-    
-    // DROP DATABASE FIRST
-    await mongoose.connection.dropDatabase();
-    console.log('Old database dropped');
-    
-    // Your existing seed code here...
-    // (add your 5th floor data, etc.)
-    
-    console.log('Database seeded successfully');
-    process.exit(0);
-  } catch (error) {
-    console.error('Seeding error:', error);
-    process.exit(1);
-  }
-}
+const admin = require('firebase-admin');
 const path = require('path');
-
-// Load environment variables
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-console.log('📁 Environment loaded');
-console.log('🔗 MongoDB URI:', process.env.MONGODB_URI ? 'Found' : 'NOT FOUND');
+// Initialize Firebase Admin
+if (!admin.apps.length) {
+  const serviceAccount = require('../../serviceAccountKey.json'); // replace with your key path
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+}
 
-const Location = require('../models/Location');
+const db = admin.firestore();
 
 // Sample locations for BSN Block
 // Note: 1 step ≈ 0.75 meters
@@ -255,188 +234,23 @@ const sampleLocations = [
   },
 ];
 
-console.log(`📝 Prepared ${sampleLocations.length} sample locations`);
-
-// Function to seed database
-async function seedDatabase() {
-  console.log('🔄 Connecting to MongoDB...');
+async function seedFirebase() {
+  console.log('🔄 Starting Firebase seeding...');
   
   try {
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ Connected to MongoDB');
-
-    // Clear existing locations
-    console.log('🗑  Clearing existing locations...');
-    const deleteResult = await Location.deleteMany({});
-    console.log(`🗑  Deleted ${deleteResult.deletedCount} existing locations`);
-
-    // Insert sample locations
-    console.log(`'📥 Inserting sample locations...'`);
-    const locations = await Location.insertMany(sampleLocations);
-    console.log(`✅ Added ${locations.length} sample locations`);
-
-    // Now let's connect them with paths
-    console.log('🔗 Connecting 5th floor locations with paths...');
-    
-    // Find 5th floor locations
-    const frontLift5 = await Location.findOne({ name: '5th Floor Front Lift' });
-    const backLift5 = await Location.findOne({ name: '5th Floor Back Lift' });
-    const kevinAshtonLab = await Location.findOne({ name: 'Kevin Ashton IoT Lab' });
-    const sahyadriLab = await Location.findOne({ name: 'Sahyadri AI Computing Lab' });
-    const johnMcCarthyLab = await Location.findOne({ name: 'John McCarthy Lab' });
-    const aimlBoardRoom = await Location.findOne({ name: 'AIML Board Room' });
-    const aimlFacultyRoom = await Location.findOne({ name: 'AIML Faculty Room' });
-    const staffRoom = await Location.findOne({ name: 'Staff Room' });
-    const cybersecurityLab = await Location.findOne({ name: 'MTech Cybersecurity Research Lab' });
-    const peterNaurLab = await Location.findOne({ name: 'Peter Naur Data Science Lab' });
-
-    // Connect FRONT LIFT to nearby locations
-    frontLift5.connectedTo.push(
-      {
-        locationId: kevinAshtonLab._id,
-        distance: 10 * 0.75, // 10 steps = 7.5m
-        pathType: 'corridor'
-      },
-      {
-        locationId: sahyadriLab._id,
-        distance: 24 * 0.75, // 24 steps = 18m
-        pathType: 'corridor'
-      },
-      {
-        locationId: johnMcCarthyLab._id,
-        distance: 44 * 0.75, // 44 steps = 33m
-        pathType: 'corridor'
-      },
-      {
-        locationId: aimlBoardRoom._id,
-        distance: 44 * 0.75,
-        pathType: 'corridor'
-      },
-      {
-        locationId: aimlFacultyRoom._id,
-        distance: 54 * 0.75, // 54 steps = 40.5m
-        pathType: 'corridor'
-      },
-      {
-        locationId: staffRoom._id,
-        distance: 54 * 0.75,
-        pathType: 'corridor'
-      },
-      {
-        locationId: cybersecurityLab._id,
-        distance: 26 * 0.75, // 26 steps = 19.5m
-        pathType: 'corridor'
-      },
-      {
-        locationId: peterNaurLab._id,
-        distance: 32 * 0.75, // 32 steps = 24m
-        pathType: 'corridor'
-      }
-    );
-    await frontLift5.save();
-    console.log('  ✓ Connected Front Lift to all rooms');
-
-    // Connect BACK LIFT to nearby locations
-    backLift5.connectedTo.push(
-      {
-        locationId: aimlFacultyRoom._id,
-        distance: 11 * 0.75, // 11 steps = 8.25m
-        pathType: 'corridor'
-      },
-      {
-        locationId: staffRoom._id,
-        distance: 23 * 0.75, // 23 steps = 17.25m
-        pathType: 'corridor'
-      },
-      {
-        locationId: johnMcCarthyLab._id,
-        distance: 21 * 0.75, // 21 steps = 15.75m
-        pathType: 'corridor'
-      },
-      {
-        locationId: sahyadriLab._id,
-        distance: 38 * 0.75, // 38 steps = 28.5m
-        pathType: 'corridor'
-      },
-      {
-        locationId: kevinAshtonLab._id,
-        distance: 56 * 0.75, // 56 steps = 42m
-        pathType: 'corridor'
-      },
-      {
-        locationId: cybersecurityLab._id,
-        distance: 66 * 0.75, // 66 steps = 49.5m
-        pathType: 'corridor'
-      },
-      {
-        locationId: peterNaurLab._id,
-        distance: 72 * 0.75, // 72 steps = 54m
-        pathType: 'corridor'
-      }
-    );
-    await backLift5.save();
-    console.log('  ✓ Connected Back Lift to all rooms');
-
-    // Connect each room back to both lifts (bidirectional)
-    const rooms = [
-      kevinAshtonLab, sahyadriLab, johnMcCarthyLab, aimlBoardRoom,
-      aimlFacultyRoom, staffRoom, cybersecurityLab, peterNaurLab
-    ];
-
-    for (const room of rooms) {
-      // Find distances from front lift
-      const frontConnection = frontLift5.connectedTo.find(
-        c => c.locationId.toString() === room._id.toString()
-      );
-      
-      // Find distances from back lift
-      const backConnection = backLift5.connectedTo.find(
-        c => c.locationId.toString() === room._id.toString()
-      );
-
-      if (frontConnection) {
-        room.connectedTo.push({
-          locationId: frontLift5._id,
-          distance: frontConnection.distance,
-          pathType: 'corridor'
-        });
-      }
-
-      if (backConnection) {
-        room.connectedTo.push({
-          locationId: backLift5._id,
-          distance: backConnection.distance,
-          pathType: 'corridor'
-        });
-      }
-
-      await room.save();
+    for (const loc of sampleLocations) {
+      // Use deterministic doc ID to prevent duplicates
+      const docId = loc.name.replace(/\s+/g, '_').toLowerCase();
+      await db.collection('locations').doc(docId).set(loc, { merge: true });
+      console.log(`✅ Seeded: ${loc.name}`);
     }
-    console.log('  ✓ Connected all rooms back to lifts (bidirectional)');
 
-    console.log('✅ All 5th floor locations connected!');
-    console.log('🎉 Database seeded successfully!');
-    
-    // Summary
-    console.log('\n📊 Summary:');
-    console.log(`   Total locations: ${locations.length}`);
-    console.log(`   5th Floor rooms: 10`);
-    console.log(`   Front entrance connections: 8`);
-    console.log(`   Back entrance connections: 7`);
-    
-    await mongoose.connection.close();
-    console.log('👋 Connection closed');
-    
+    console.log(`🎉 All ${sampleLocations.length} locations seeded without duplicates!`);
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error seeding database:', error.message);
-    console.error('Full error:', error);
+    console.error('❌ Firebase seed error:', error);
     process.exit(1);
   }
 }
 
-console.log('🏃 Running seed function...');
-
-// Run the seeding function
-seedDatabase();
+seedFirebase();

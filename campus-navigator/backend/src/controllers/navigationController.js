@@ -38,9 +38,26 @@ exports.searchLocations = async (req, res) => {
 };
 
 // Get all locations
+// Get all locations (with filtering)
 exports.getAllLocations = async (req, res) => {
   try {
-    const snapshot = await db.collection('locations').get();
+    const { building, floor, type } = req.query;
+
+    let query = db.collection('locations');
+
+    if (building) {
+      query = query.where('building', '==', building);
+    }
+
+    if (floor !== undefined) {
+      query = query.where('floor', '==', parseInt(floor));
+    }
+
+    if (type) {
+      query = query.where('type', '==', type);
+    }
+
+    const snapshot = await query.get();
 
     const locations = snapshot.docs.map(doc => ({
       id: doc.id,
@@ -61,6 +78,7 @@ exports.getAllLocations = async (req, res) => {
     });
   }
 };
+
 
 // Get single location
 exports.getLocation = async (req, res) => {
