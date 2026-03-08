@@ -5,35 +5,28 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  ActivityIndicator,
   Dimensions,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Screen from '../../components/Screen';
 import { COLORS, SPACING } from '../../config';
-import { getNavigationPath } from '../../services/navigationService';
 
 const { width } = Dimensions.get('window');
 
-// ─── 5th Floor Map Data ────────────────────────────────────────────────────
-// All rooms on the 5th floor with their positions for the floor plan SVG
-// Positions are percentages (0–100) of the map area
 const FLOOR_5_ROOMS = [
-  { id: 'front-lift',       label: 'Front\nLift',      x: 5,  y: 42, w: 8,  h: 10, color: '#5856D6', type: 'lift' },
-  { id: 'kevin-ashton',     label: 'Kevin\nAshton\nIoT 501', x: 16, y: 38, w: 13, h: 14, color: '#34C759', type: 'room' },
-  { id: 'sahyadri-ai',      label: 'Sahyadri\nAI 507', x: 32, y: 35, w: 13, h: 14, color: '#34C759', type: 'room' },
-  { id: 'john-mccarthy',    label: 'John\nMcCarthy\n506', x: 48, y: 32, w: 13, h: 14, color: '#34C759', type: 'room' },
-  { id: 'aiml-board',       label: 'AIML\nBoard\nRoom', x: 48, y: 50, w: 13, h: 12, color: '#FF9500', type: 'room' },
-  { id: 'aiml-faculty',     label: 'AIML\nFaculty',    x: 64, y: 32, w: 13, h: 14, color: '#FF9500', type: 'room' },
-  { id: 'staff-room',       label: 'Staff\nRoom',      x: 64, y: 50, w: 13, h: 12, color: '#FF9500', type: 'room' },
-  { id: 'back-lift',        label: 'Back\nLift',       x: 87, y: 42, w: 8,  h: 10, color: '#5856D6', type: 'lift' },
-  { id: 'cybersecurity',    label: 'Cyber\nSec TR501', x: 32, y: 62, w: 13, h: 14, color: '#34C759', type: 'room' },
-  { id: 'peter-naur',       label: 'Peter\nNaur 502',  x: 48, y: 62, w: 13, h: 14, color: '#34C759', type: 'room' },
+  { id: 'front-lift',    label: 'Front\nLift',           x: 5,  y: 42, w: 8,  h: 10, color: '#5856D6', type: 'lift' },
+  { id: 'kevin-ashton', label: 'Kevin\nAshton\nIoT 501', x: 16, y: 38, w: 13, h: 14, color: '#34C759', type: 'room' },
+  { id: 'sahyadri-ai',  label: 'Sahyadri\nAI 507',       x: 32, y: 35, w: 13, h: 14, color: '#34C759', type: 'room' },
+  { id: 'john-mccarthy',label: 'John\nMcCarthy\n506',    x: 48, y: 32, w: 13, h: 14, color: '#34C759', type: 'room' },
+  { id: 'aiml-board',   label: 'AIML\nBoard\nRoom',      x: 48, y: 50, w: 13, h: 12, color: '#FF9500', type: 'room' },
+  { id: 'aiml-faculty', label: 'AIML\nFaculty',          x: 64, y: 32, w: 13, h: 14, color: '#FF9500', type: 'room' },
+  { id: 'staff-room',   label: 'Staff\nRoom',            x: 64, y: 50, w: 13, h: 12, color: '#FF9500', type: 'room' },
+  { id: 'back-lift',    label: 'Back\nLift',             x: 87, y: 42, w: 8,  h: 10, color: '#5856D6', type: 'lift' },
+  { id: 'cybersecurity',label: 'Cyber\nSec TR501',       x: 32, y: 62, w: 13, h: 14, color: '#34C759', type: 'room' },
+  { id: 'peter-naur',   label: 'Peter\nNaur 502',        x: 48, y: 62, w: 13, h: 14, color: '#34C759', type: 'room' },
 ];
 
-// Corridor path (percentage points for the horizontal corridor line)
 const CORRIDOR_Y = 47;
 
-// ─── Starting points the user can pick ─────────────────────────────────────
 const START_POINTS = [
   {
     id: 'front-lift',
@@ -82,7 +75,6 @@ const START_POINTS = [
   },
 ];
 
-// ─── Which map room ID corresponds to a location name ──────────────────────
 const NAME_TO_MAP_ID = {
   'Kevin Ashton IoT Lab': 'kevin-ashton',
   'Sahyadri AI Computing Lab': 'sahyadri-ai',
@@ -94,7 +86,6 @@ const NAME_TO_MAP_ID = {
   'Peter Naur Data Science Lab': 'peter-naur',
 };
 
-// ─── Simple SVG-style floor plan using Views ────────────────────────────────
 function FloorMap({ locationName, startPointId }) {
   const MAP_W = width - SPACING.lg * 2;
   const MAP_H = MAP_W * 0.55;
@@ -102,25 +93,14 @@ function FloorMap({ locationName, startPointId }) {
 
   return (
     <View style={[styles.mapContainer, { height: MAP_H }]}>
-      {/* Corridor */}
       <View
-        style={[
-          styles.corridor,
-          {
-            top: `${CORRIDOR_Y}%`,
-            left: '5%',
-            right: '5%',
-          },
-        ]}
+        style={[styles.corridor, { top: `${CORRIDOR_Y}%`, left: '5%', right: '5%' }]}
       />
-
-      {/* Rooms */}
       {FLOOR_5_ROOMS.map((room) => {
         const isTarget = room.id === targetMapId;
         const isStart =
           (startPointId === 'front-lift' && room.id === 'front-lift') ||
           (startPointId === 'back-lift' && room.id === 'back-lift');
-
         return (
           <View
             key={room.id}
@@ -131,28 +111,15 @@ function FloorMap({ locationName, startPointId }) {
                 top: `${room.y}%`,
                 width: `${room.w}%`,
                 height: `${room.h}%`,
-                backgroundColor: isTarget
-                  ? COLORS.danger
-                  : isStart
-                  ? '#5856D6'
-                  : room.type === 'lift'
-                  ? '#C7C7CC'
-                  : '#D1F0DC',
-                borderColor: isTarget
-                  ? COLORS.danger
-                  : isStart
-                  ? '#3634A3'
-                  : room.color,
+                backgroundColor: isTarget ? COLORS.danger : isStart ? '#5856D6' : room.type === 'lift' ? '#C7C7CC' : '#D1F0DC',
+                borderColor: isTarget ? COLORS.danger : isStart ? '#3634A3' : room.color,
                 borderWidth: isTarget || isStart ? 2 : 1,
                 transform: isTarget ? [{ scale: 1.05 }] : [],
               },
             ]}
           >
             <Text
-              style={[
-                styles.mapRoomText,
-                { color: isTarget || isStart ? COLORS.white : '#1C1C1E' },
-              ]}
+              style={[styles.mapRoomText, { color: isTarget || isStart ? COLORS.white : '#1C1C1E' }]}
               numberOfLines={3}
             >
               {room.label}
@@ -160,8 +127,6 @@ function FloorMap({ locationName, startPointId }) {
           </View>
         );
       })}
-
-      {/* Legend */}
       <View style={styles.mapLegend}>
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: COLORS.danger }]} />
@@ -176,32 +141,22 @@ function FloorMap({ locationName, startPointId }) {
   );
 }
 
-// ─── Main Screen ─────────────────────────────────────────────────────────────
 export default function LocationDetailScreen({ navigation, route }) {
   const { location } = route.params || {};
   const [selectedStart, setSelectedStart] = useState(null);
   const [stepCount, setStepCount] = useState(null);
   const [recommendedLift, setRecommendedLift] = useState(null);
-  const [showStartPicker, setShowStartPicker] = useState(true);
 
-  // Guard: if no location passed, go back
   useEffect(() => {
-    if (!location) {
-      navigation.goBack();
-    }
+    if (!location) navigation.goBack();
   }, [location]);
 
-  // Recalculate steps whenever start point changes
   useEffect(() => {
     if (!selectedStart || !location) return;
-
     const startData = START_POINTS.find((s) => s.id === selectedStart);
     if (!startData) return;
-
     const steps = startData.steps[location.name];
     setStepCount(steps ?? null);
-
-    // For ground floor start, determine which lift is closer to the destination
     if (selectedStart === 'ground-entrance') {
       const frontSteps = START_POINTS[0].steps[location.name];
       const backSteps = START_POINTS[1].steps[location.name];
@@ -215,22 +170,15 @@ export default function LocationDetailScreen({ navigation, route }) {
 
   if (!location) return null;
 
-  const handleSelectStart = (id) => {
-    setSelectedStart(id);
-    setShowStartPicker(false);
-  };
-
   const distanceMeters = stepCount ? (stepCount * 0.75).toFixed(0) : null;
-  const walkMinutes = stepCount ? Math.ceil(stepCount / 100) : null; // ~100 steps/min
+  const walkMinutes = stepCount ? Math.ceil(stepCount / 100) : null;
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
+    // ✅ Screen replaces SafeAreaView — fixes web scroll
+    <Screen style={styles.container}>
+      {/* Header — stays fixed at top */}
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backText}>‹ Back</Text>
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={2}>
@@ -238,7 +186,12 @@ export default function LocationDetailScreen({ navigation, route }) {
         </Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      {/* ✅ ScrollView with flex:1 + flexGrow:1 fixes web scroll */}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={true}
+      >
         {/* Room Info Card */}
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
@@ -286,27 +239,21 @@ export default function LocationDetailScreen({ navigation, route }) {
 
         {/* Starting Point Picker */}
         <Text style={styles.sectionTitle}>📍 Where are you starting from?</Text>
-
         {START_POINTS.map((point) => (
           <TouchableOpacity
             key={point.id}
-            style={[
-              styles.startCard,
-              selectedStart === point.id && styles.startCardSelected,
-            ]}
-            onPress={() => handleSelectStart(point.id)}
+            style={[styles.startCard, selectedStart === point.id && styles.startCardSelected]}
+            onPress={() => setSelectedStart(point.id)}
           >
             <View style={styles.startCardInner}>
               <Text style={styles.startLabel}>{point.label}</Text>
               <Text style={styles.startSubtitle}>{point.subtitle}</Text>
             </View>
-            {selectedStart === point.id && (
-              <Text style={styles.checkmark}>✓</Text>
-            )}
+            {selectedStart === point.id && <Text style={styles.checkmark}>✓</Text>}
           </TouchableOpacity>
         ))}
 
-        {/* Step Count Result */}
+        {/* Navigation Guide */}
         {selectedStart && (
           <View style={styles.stepCard}>
             {stepCount !== null ? (
@@ -333,9 +280,7 @@ export default function LocationDetailScreen({ navigation, route }) {
                   <View style={styles.liftTip}>
                     <Text style={styles.liftTipIcon}>💡</Text>
                     <Text style={styles.liftTipText}>
-                      Take the{' '}
-                      <Text style={styles.liftTipBold}>{recommendedLift}</Text>{' '}
-                      to Floor 5 — it's closer to {location.name}.
+                      Take the <Text style={styles.liftTipBold}>{recommendedLift}</Text> to Floor 5 — it's closer to {location.name}.
                     </Text>
                   </View>
                 )}
@@ -343,23 +288,15 @@ export default function LocationDetailScreen({ navigation, route }) {
                 {selectedStart === 'front-lift' && (
                   <View style={styles.directionSteps}>
                     <Text style={styles.directionTitle}>Directions</Text>
-                    <Text style={styles.directionStep}>
-                      1. Take the Front Lift to Floor 5
-                    </Text>
-                    <Text style={styles.directionStep}>
-                      2. Exit the lift and walk along the corridor
-                    </Text>
+                    <Text style={styles.directionStep}>1. Take the Front Lift to Floor 5</Text>
+                    <Text style={styles.directionStep}>2. Exit the lift and walk along the corridor</Text>
                     <Text style={styles.directionStep}>
                       3. {location.name} is on your{' '}
-                      {['Kevin Ashton IoT Lab', 'Sahyadri AI Computing Lab', 'John McCarthy Lab', 'AIML Faculty Room'].includes(location.name)
-                        ? 'left'
-                        : 'right'}{' '}
+                      {['Kevin Ashton IoT Lab','Sahyadri AI Computing Lab','John McCarthy Lab','AIML Faculty Room'].includes(location.name) ? 'left' : 'right'}{' '}
                       after ~{stepCount} steps
                     </Text>
                     {location.roomNumber && (
-                      <Text style={styles.directionStep}>
-                        4. Look for Room {location.roomNumber}
-                      </Text>
+                      <Text style={styles.directionStep}>4. Look for Room {location.roomNumber}</Text>
                     )}
                   </View>
                 )}
@@ -367,19 +304,11 @@ export default function LocationDetailScreen({ navigation, route }) {
                 {selectedStart === 'back-lift' && (
                   <View style={styles.directionSteps}>
                     <Text style={styles.directionTitle}>Directions</Text>
-                    <Text style={styles.directionStep}>
-                      1. Take the Back Lift to Floor 5
-                    </Text>
-                    <Text style={styles.directionStep}>
-                      2. Exit and walk towards the main corridor
-                    </Text>
-                    <Text style={styles.directionStep}>
-                      3. {location.name} is ~{stepCount} steps ahead
-                    </Text>
+                    <Text style={styles.directionStep}>1. Take the Back Lift to Floor 5</Text>
+                    <Text style={styles.directionStep}>2. Exit and walk towards the main corridor</Text>
+                    <Text style={styles.directionStep}>3. {location.name} is ~{stepCount} steps ahead</Text>
                     {location.roomNumber && (
-                      <Text style={styles.directionStep}>
-                        4. Look for Room {location.roomNumber}
-                      </Text>
+                      <Text style={styles.directionStep}>4. Look for Room {location.roomNumber}</Text>
                     )}
                   </View>
                 )}
@@ -387,29 +316,20 @@ export default function LocationDetailScreen({ navigation, route }) {
                 {selectedStart === 'ground-entrance' && (
                   <View style={styles.directionSteps}>
                     <Text style={styles.directionTitle}>Directions</Text>
+                    <Text style={styles.directionStep}>1. Enter BSN Block from the Main Entrance</Text>
                     <Text style={styles.directionStep}>
-                      1. Enter BSN Block from the Main Entrance
+                      2. Take the <Text style={{ fontWeight: '700' }}>{recommendedLift}</Text> to Floor 5
                     </Text>
-                    <Text style={styles.directionStep}>
-                      2. Take the{' '}
-                      <Text style={{ fontWeight: '700' }}>{recommendedLift}</Text> to Floor 5
-                    </Text>
-                    <Text style={styles.directionStep}>
-                      3. Walk ~{stepCount} steps to {location.name}
-                    </Text>
+                    <Text style={styles.directionStep}>3. Walk ~{stepCount} steps to {location.name}</Text>
                     {location.roomNumber && (
-                      <Text style={styles.directionStep}>
-                        4. Look for Room {location.roomNumber}
-                      </Text>
+                      <Text style={styles.directionStep}>4. Look for Room {location.roomNumber}</Text>
                     )}
                   </View>
                 )}
               </>
             ) : (
               <View style={styles.noStepsContainer}>
-                <Text style={styles.noStepsText}>
-                  ⚠️ Step count unavailable for this route
-                </Text>
+                <Text style={styles.noStepsText}>⚠️ Step count unavailable for this route</Text>
               </View>
             )}
           </View>
@@ -417,14 +337,11 @@ export default function LocationDetailScreen({ navigation, route }) {
 
         {/* Floor Map */}
         <Text style={styles.sectionTitle}>🗺️ Floor 5 Map</Text>
-        <FloorMap
-          locationName={location.name}
-          startPointId={selectedStart}
-        />
+        <FloorMap locationName={location.name} startPointId={selectedStart} />
 
         <View style={{ height: SPACING.xl }} />
       </ScrollView>
-    </SafeAreaView>
+    </Screen>
   );
 }
 
@@ -439,24 +356,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5EA',
   },
-  backButton: {
-    marginBottom: SPACING.sm,
-  },
-  backText: {
-    fontSize: 18,
-    color: COLORS.primary,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: COLORS.black,
-    lineHeight: 30,
-  },
-  scrollContent: {
-    padding: SPACING.lg,
-  },
+  backButton: { marginBottom: SPACING.sm },
+  backText: { fontSize: 18, color: COLORS.primary },
+  title: { fontSize: 24, fontWeight: 'bold', color: COLORS.black, lineHeight: 30 },
 
-  // Info card
+  // ✅ Key scroll fixes
+  scroll: { flex: 1 },
+  scrollContent: { padding: SPACING.lg, flexGrow: 1 },
+
   infoCard: {
     backgroundColor: COLORS.white,
     borderRadius: 16,
@@ -468,45 +375,14 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: SPACING.sm,
-    gap: SPACING.md,
-  },
-  infoIcon: {
-    fontSize: 22,
-    width: 28,
-    textAlign: 'center',
-  },
-  infoLabel: {
-    fontSize: 12,
-    color: COLORS.gray,
-    marginBottom: 2,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  infoValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.black,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#F2F2F7',
-    marginLeft: 44,
-  },
+  infoRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: SPACING.sm, gap: SPACING.md },
+  infoIcon: { fontSize: 22, width: 28, textAlign: 'center' },
+  infoLabel: { fontSize: 12, color: COLORS.gray, marginBottom: 2, textTransform: 'uppercase', letterSpacing: 0.5 },
+  infoValue: { fontSize: 16, fontWeight: '600', color: COLORS.black },
+  divider: { height: 1, backgroundColor: '#F2F2F7', marginLeft: 44 },
 
-  // Section title
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: COLORS.black,
-    marginBottom: SPACING.md,
-    marginTop: SPACING.sm,
-  },
+  sectionTitle: { fontSize: 18, fontWeight: '700', color: COLORS.black, marginBottom: SPACING.md, marginTop: SPACING.sm },
 
-  // Start point cards
   startCard: {
     backgroundColor: COLORS.white,
     borderRadius: 12,
@@ -522,30 +398,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  startCardSelected: {
-    borderColor: COLORS.primary,
-    backgroundColor: '#F0F8FF',
-  },
-  startCardInner: {
-    flex: 1,
-  },
-  startLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLORS.black,
-    marginBottom: 2,
-  },
-  startSubtitle: {
-    fontSize: 13,
-    color: COLORS.gray,
-  },
-  checkmark: {
-    fontSize: 20,
-    color: COLORS.primary,
-    fontWeight: '700',
-  },
+  startCardSelected: { borderColor: COLORS.primary, backgroundColor: '#F0F8FF' },
+  startCardInner: { flex: 1 },
+  startLabel: { fontSize: 16, fontWeight: '600', color: COLORS.black, marginBottom: 2 },
+  startSubtitle: { fontSize: 13, color: COLORS.gray },
+  checkmark: { fontSize: 20, color: COLORS.primary, fontWeight: '700' },
 
-  // Step count card
   stepCard: {
     backgroundColor: COLORS.primary,
     borderRadius: 16,
@@ -557,141 +415,28 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 6,
   },
-  stepCardTitle: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 13,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: SPACING.md,
-  },
-  stepCountRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: SPACING.md,
-  },
-  stepStat: {
-    alignItems: 'center',
-  },
-  stepNumber: {
-    fontSize: 34,
-    fontWeight: '800',
-    color: COLORS.white,
-  },
-  stepUnit: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.75)',
-    marginTop: 2,
-  },
-  stepDividerV: {
-    width: 1,
-    backgroundColor: 'rgba(255,255,255,0.25)',
-    marginVertical: 4,
-  },
-  liftTip: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 10,
-    padding: SPACING.md,
-    marginBottom: SPACING.md,
-    gap: SPACING.sm,
-    alignItems: 'flex-start',
-  },
-  liftTipIcon: {
-    fontSize: 16,
-  },
-  liftTipText: {
-    flex: 1,
-    color: COLORS.white,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  liftTipBold: {
-    fontWeight: '700',
-  },
-  directionSteps: {
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    borderRadius: 10,
-    padding: SPACING.md,
-  },
-  directionTitle: {
-    color: COLORS.white,
-    fontWeight: '700',
-    fontSize: 14,
-    marginBottom: SPACING.sm,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  directionStep: {
-    color: 'rgba(255,255,255,0.9)',
-    fontSize: 14,
-    lineHeight: 22,
-    marginBottom: 4,
-  },
-  noStepsContainer: {
-    alignItems: 'center',
-    paddingVertical: SPACING.md,
-  },
-  noStepsText: {
-    color: COLORS.white,
-    fontSize: 15,
-  },
+  stepCardTitle: { color: 'rgba(255,255,255,0.8)', fontSize: 13, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1, marginBottom: SPACING.md },
+  stepCountRow: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: SPACING.md },
+  stepStat: { alignItems: 'center' },
+  stepNumber: { fontSize: 34, fontWeight: '800', color: COLORS.white },
+  stepUnit: { fontSize: 13, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
+  stepDividerV: { width: 1, backgroundColor: 'rgba(255,255,255,0.25)', marginVertical: 4 },
+  liftTip: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 10, padding: SPACING.md, marginBottom: SPACING.md, gap: SPACING.sm, alignItems: 'flex-start' },
+  liftTipIcon: { fontSize: 16 },
+  liftTipText: { flex: 1, color: COLORS.white, fontSize: 14, lineHeight: 20 },
+  liftTipBold: { fontWeight: '700' },
+  directionSteps: { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 10, padding: SPACING.md },
+  directionTitle: { color: COLORS.white, fontWeight: '700', fontSize: 14, marginBottom: SPACING.sm, textTransform: 'uppercase', letterSpacing: 0.5 },
+  directionStep: { color: 'rgba(255,255,255,0.9)', fontSize: 14, lineHeight: 22, marginBottom: 4 },
+  noStepsContainer: { alignItems: 'center', paddingVertical: SPACING.md },
+  noStepsText: { color: COLORS.white, fontSize: 15 },
 
-  // Floor map
-  mapContainer: {
-    backgroundColor: '#E8F4FF',
-    borderRadius: 16,
-    overflow: 'hidden',
-    position: 'relative',
-    borderWidth: 1,
-    borderColor: '#C5DCF5',
-    marginBottom: SPACING.md,
-  },
-  corridor: {
-    position: 'absolute',
-    height: 8,
-    backgroundColor: '#B0C4DE',
-    borderRadius: 4,
-    zIndex: 1,
-  },
-  mapRoom: {
-    position: 'absolute',
-    borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 2,
-    zIndex: 2,
-  },
-  mapRoomText: {
-    fontSize: 6.5,
-    fontWeight: '600',
-    textAlign: 'center',
-    lineHeight: 9,
-  },
-  mapLegend: {
-    position: 'absolute',
-    bottom: 6,
-    right: 8,
-    flexDirection: 'row',
-    gap: 10,
-    backgroundColor: 'rgba(255,255,255,0.85)',
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  legendDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  legendText: {
-    fontSize: 9,
-    color: '#1C1C1E',
-    fontWeight: '600',
-  },
+  mapContainer: { backgroundColor: '#E8F4FF', borderRadius: 16, overflow: 'hidden', position: 'relative', borderWidth: 1, borderColor: '#C5DCF5', marginBottom: SPACING.md },
+  corridor: { position: 'absolute', height: 8, backgroundColor: '#B0C4DE', borderRadius: 4, zIndex: 1 },
+  mapRoom: { position: 'absolute', borderRadius: 6, justifyContent: 'center', alignItems: 'center', padding: 2, zIndex: 2 },
+  mapRoomText: { fontSize: 6.5, fontWeight: '600', textAlign: 'center', lineHeight: 9 },
+  mapLegend: { position: 'absolute', bottom: 6, right: 8, flexDirection: 'row', gap: 10, backgroundColor: 'rgba(255,255,255,0.85)', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4 },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  legendDot: { width: 8, height: 8, borderRadius: 4 },
+  legendText: { fontSize: 9, color: '#1C1C1E', fontWeight: '600' },
 });

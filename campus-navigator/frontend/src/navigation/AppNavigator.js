@@ -12,6 +12,7 @@ import SelectDestination from '../screens/navigation/SelectDestination';
 import PathResult from '../screens/navigation/PathResult';
 
 import QRScannerScreen from '../screens/navigation/QRScannerScreen'; 
+import BuildingMapScreen from '../screens/navigation/BuildingMapScreen';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ export default function AppNavigator() {
         <Stack.Screen name="PathResult" component={PathResult} />
 
         <Stack.Screen name="QRScanner" component={QRScannerScreen} />
+        <Stack.Screen name="BuildingMap" component={BuildingMapScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
