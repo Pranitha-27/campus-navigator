@@ -32,6 +32,17 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
 
         <TouchableOpacity
+          style={[styles.button, styles.qrButton]}
+          onPress={() => navigation.navigate('QRScanner')}
+        >
+          <Text style={styles.buttonIcon}>📷</Text>
+          <Text style={styles.buttonTitle}>Scan QR Code</Text>
+          <Text style={styles.buttonSubtitle}>
+            Scan a room QR code to navigate instantly
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={[styles.button, styles.tertiaryButton]}
           onPress={() => alert('Coming soon!')}
         >
@@ -95,6 +106,9 @@ const styles = StyleSheet.create({
   },
   tertiaryButton: {
     backgroundColor: COLORS.secondary,
+  },
+  qrButton: {
+    backgroundColor: '#1C1C1E',
   },
   buttonIcon: {
     fontSize: 40,
