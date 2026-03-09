@@ -40,7 +40,13 @@
         }
       ],
       "expo-barcode-scanner",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-camera",
+          {
+            "cameraPermission": "Allow Campus Navigator to use the camera for QR code scanning."
+          }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

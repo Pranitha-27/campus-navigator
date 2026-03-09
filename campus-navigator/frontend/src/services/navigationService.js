@@ -54,3 +54,32 @@ export const searchLocations = async (searchTerm) => {
     return { success: false, count: 0, data: [] };
   }
 };
+
+import api from './api';
+
+// Find path between two locations
+export const findPath = async (startId, endId) => {
+  try {
+    const response = await api.get('/navigation/path', {
+      params: { startId, endId },
+    });
+    return { success: true, data: response.data };
+  } catch (err) {
+    console.error('findPath error:', err);
+    return { success: false, data: null };
+  }
+};
+
+// Seed data safely (skips if data already exists)
+export const seedFirestoreSafely = async () => {
+  try {
+    const existing = await getAllLocations();
+    if (existing.data && existing.data.length > 0) {
+      console.log(`✅ Firestore already has ${existing.data.length} locations, skipping seed.`);
+      return;
+    }
+    console.log('🌱 No data found, please run the seed script from backend.');
+  } catch (err) {
+    console.error('seedFirestoreSafely error:', err);
+  }
+};
