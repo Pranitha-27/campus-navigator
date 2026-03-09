@@ -31,16 +31,7 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, styles.secondaryButton]}
-          onPress={() => navigation.navigate('BookingHome')}
-        >
-          <Text style={styles.buttonIcon}>🍽️</Text>
-          <Text style={styles.buttonTitle}>Book Seat</Text>
-          <Text style={styles.buttonSubtitle}>
-            Reserve tables in cafeteria or bakery
-          </Text>
-        </TouchableOpacity>
+       
 
         <TouchableOpacity
           style={[styles.button, styles.tertiaryButton]}
