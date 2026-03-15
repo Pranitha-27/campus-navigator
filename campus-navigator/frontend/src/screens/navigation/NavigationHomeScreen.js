@@ -19,6 +19,10 @@ export default function NavigationHomeScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+<<<<<<< HEAD
+    // Seed Firestore safely (no duplicates) then load locations
+=======
+>>>>>>> 6391fe06a9906ac2a0d7ff969ca28e6be1a3ccb7
     const init = async () => {
       await seedFirestoreSafely();
       await loadAllLocations();
@@ -242,10 +246,13 @@ const styles = StyleSheet.create({
   // Loading
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: SPACING.md, fontSize: 16, color: COLORS.gray },
+<<<<<<< HEAD
+=======
 
   // Empty
   emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 60 },
   emptyIcon: { fontSize: 48, marginBottom: 12 },
   emptyText: { fontSize: 18, fontWeight: '600', color: COLORS.black, marginBottom: 6 },
   emptySubText: { fontSize: 14, color: COLORS.gray },
+>>>>>>> 6391fe06a9906ac2a0d7ff969ca28e6be1a3ccb7
 });

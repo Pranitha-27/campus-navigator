@@ -89,9 +89,34 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.footerText}>
             Made with ❤️ for easier campus life
           </Text>
+<<<<<<< HEAD
+        </TouchableOpacity>
+
+       
+
+        <TouchableOpacity
+          style={[styles.button, styles.tertiaryButton]}
+          onPress={() => alert('Coming soon!')}
+        >
+          <Text style={styles.buttonIcon}>⭐</Text>
+          <Text style={styles.buttonTitle}>My Favorites</Text>
+          <Text style={styles.buttonSubtitle}>
+            Quick access to saved locations
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>
+          Made with ❤️ for easier campus life
+        </Text>
+      </View>
+    </SafeAreaView>
+=======
         </View>
       </ScrollView>
     </Screen>
+>>>>>>> 6391fe06a9906ac2a0d7ff969ca28e6be1a3ccb7
   );
 }
 
