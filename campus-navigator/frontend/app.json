@@ -46,6 +46,13 @@
           {
             "cameraPermission": "Allow Campus Navigator to use the camera for QR code scanning."
           }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Campus Navigator to use your location for real-time navigation.",
+          "locationWhenInUsePermission": "Allow Campus Navigator to use your location for real-time navigation."
+        }
       ]
     ],
     "experiments": {

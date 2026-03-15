@@ -71,6 +71,17 @@ export default function HomeScreen({ navigation }) {
               Quick access to saved locations
             </Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.liveButton]}
+            onPress={() => navigation.navigate('LiveNavigation')}
+          >
+            <Text style={styles.buttonIcon}>📡</Text>
+            <Text style={styles.buttonTitle}>Live Navigation</Text>
+            <Text style={styles.buttonSubtitle}>
+              GPS tracking + crowd heatmap
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Footer */}
@@ -149,4 +160,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.gray,
   },
+  liveButton: { backgroundColor: '#EF4444' }
 });

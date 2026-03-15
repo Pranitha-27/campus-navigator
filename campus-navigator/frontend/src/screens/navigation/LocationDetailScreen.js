@@ -93,9 +93,7 @@ function FloorMap({ locationName, startPointId }) {
 
   return (
     <View style={[styles.mapContainer, { height: MAP_H }]}>
-      <View
-        style={[styles.corridor, { top: `${CORRIDOR_Y}%`, left: '5%', right: '5%' }]}
-      />
+      <View style={[styles.corridor, { top: `${CORRIDOR_Y}%`, left: '5%', right: '5%' }]} />
       {FLOOR_5_ROOMS.map((room) => {
         const isTarget = room.id === targetMapId;
         const isStart =
@@ -174,9 +172,9 @@ export default function LocationDetailScreen({ navigation, route }) {
   const walkMinutes = stepCount ? Math.ceil(stepCount / 100) : null;
 
   return (
-    // ✅ Screen replaces SafeAreaView — fixes web scroll
     <Screen style={styles.container}>
-      {/* Header — stays fixed at top */}
+
+      {/* ── Header ── */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backText}>‹ Back</Text>
@@ -186,7 +184,7 @@ export default function LocationDetailScreen({ navigation, route }) {
         </Text>
       </View>
 
-      {/* ✅ ScrollView with flex:1 + flexGrow:1 fixes web scroll */}
+      {/* ── Scrollable content ── */}
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
@@ -236,6 +234,25 @@ export default function LocationDetailScreen({ navigation, route }) {
             </>
           ) : null}
         </View>
+
+        {/* ── 📡 Live Navigate Button ── */}
+        {/* Placed prominently at top so users see it before scrolling */}
+        <TouchableOpacity
+          style={styles.liveNavBtn}
+          onPress={() => navigation.navigate('LiveNavigation', { destination: location })}
+        >
+          <View style={styles.liveNavInner}>
+            <Text style={styles.liveNavIcon}>📡</Text>
+            <View>
+              <Text style={styles.liveNavBtnText}>Live Navigate</Text>
+              <Text style={styles.liveNavSubtext}>GPS tracking + crowd heatmap</Text>
+            </View>
+            <View style={styles.livePill}>
+              <View style={styles.livePillDot} />
+              <Text style={styles.livePillText}>LIVE</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
 
         {/* Starting Point Picker */}
         <Text style={styles.sectionTitle}>📍 Where are you starting from?</Text>
@@ -341,15 +358,13 @@ export default function LocationDetailScreen({ navigation, route }) {
 
         <View style={{ height: SPACING.xl }} />
       </ScrollView>
+
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.lightGray,
-  },
+  container: { flex: 1, backgroundColor: COLORS.lightGray },
   header: {
     backgroundColor: COLORS.white,
     padding: SPACING.lg,
@@ -359,8 +374,6 @@ const styles = StyleSheet.create({
   backButton: { marginBottom: SPACING.sm },
   backText: { fontSize: 18, color: COLORS.primary },
   title: { fontSize: 24, fontWeight: 'bold', color: COLORS.black, lineHeight: 30 },
-
-  // ✅ Key scroll fixes
   scroll: { flex: 1 },
   scrollContent: { padding: SPACING.lg, flexGrow: 1 },
 
@@ -369,10 +382,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: SPACING.md,
     marginBottom: SPACING.lg,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
     elevation: 3,
   },
   infoRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: SPACING.sm, gap: SPACING.md },
@@ -380,6 +389,36 @@ const styles = StyleSheet.create({
   infoLabel: { fontSize: 12, color: COLORS.gray, marginBottom: 2, textTransform: 'uppercase', letterSpacing: 0.5 },
   infoValue: { fontSize: 16, fontWeight: '600', color: COLORS.black },
   divider: { height: 1, backgroundColor: '#F2F2F7', marginLeft: 44 },
+
+  // ── Live Navigate Button ──
+  liveNavBtn: {
+    backgroundColor: '#EF4444',
+    borderRadius: 16,
+    marginBottom: SPACING.lg,
+    overflow: 'hidden',
+    elevation: 4,
+  },
+  liveNavInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: SPACING.md,
+    gap: SPACING.md,
+  },
+  liveNavIcon: { fontSize: 28 },
+  liveNavBtnText: { color: '#fff', fontSize: 17, fontWeight: '700' },
+  liveNavSubtext: { color: 'rgba(255,255,255,0.75)', fontSize: 12, marginTop: 2 },
+  livePill: {
+    marginLeft: 'auto',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    gap: 4,
+  },
+  livePillDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#fff' },
+  livePillText: { color: '#fff', fontSize: 10, fontWeight: '800' },
 
   sectionTitle: { fontSize: 18, fontWeight: '700', color: COLORS.black, marginBottom: SPACING.md, marginTop: SPACING.sm },
 
@@ -392,10 +431,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
     elevation: 2,
   },
   startCardSelected: { borderColor: COLORS.primary, backgroundColor: '#F0F8FF' },
@@ -409,10 +444,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: SPACING.lg,
     marginVertical: SPACING.lg,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
     elevation: 6,
   },
   stepCardTitle: { color: 'rgba(255,255,255,0.8)', fontSize: 13, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1, marginBottom: SPACING.md },

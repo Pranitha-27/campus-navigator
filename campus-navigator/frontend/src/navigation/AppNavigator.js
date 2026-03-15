@@ -14,6 +14,8 @@ import PathResult from '../screens/navigation/PathResult';
 import QRScannerScreen from '../screens/navigation/QRScannerScreen'; 
 import BuildingMapScreen from '../screens/navigation/BuildingMapScreen';
 
+import LiveNavigationScreen from '../screens/navigation/LiveNavigationScreen';
+
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -31,6 +33,8 @@ export default function AppNavigator() {
 
         <Stack.Screen name="QRScanner" component={QRScannerScreen} />
         <Stack.Screen name="BuildingMap" component={BuildingMapScreen} />
+
+        <Stack.Screen name="LiveNavigation" component={LiveNavigationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
