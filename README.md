@@ -478,9 +478,7 @@ For questions, feedback, or support:
 **Made with ❤️ for smarter campus navigation**
 
 **⭐ Star this repo if you find it helpful!**
-<<<<<<< HEAD
 
----
 
 Save this as `README.md` in your project root directory. Would you like me to also create:
 
@@ -490,5 +488,3 @@ Save this as `README.md` in your project root directory. Would you like me to al
 4. **.github/ISSUE_TEMPLATE/** - Bug report templates
 
 Let me know! 🚀
-=======
->>>>>>> 6391fe06a9906ac2a0d7ff969ca28e6be1a3ccb7
