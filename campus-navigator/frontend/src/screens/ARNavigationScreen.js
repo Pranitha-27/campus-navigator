@@ -6,7 +6,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, Animated,
   Dimensions, Platform, StatusBar, Vibration, Alert
 } from 'react-native';
-import { Camera } from 'expo-camera';
+import { Camera, CameraView } from 'expo-camera';
 import { Magnetometer } from 'expo-sensors';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -143,8 +143,8 @@ export default function ARNavigationScreen({ route, navigation }) {
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
 
       {/* Camera Background */}
-      <Camera style={StyleSheet.absoluteFillObject} type={Camera.Constants?.Type?.back || 'back'} />
-
+      <CameraView style={StyleSheet.absoluteFillObject} facing="back" />
+      
       {/* Dark overlay for readability */}
       <LinearGradient
         colors={['rgba(10,14,26,0.5)', 'transparent', 'rgba(10,14,26,0.85)']}
