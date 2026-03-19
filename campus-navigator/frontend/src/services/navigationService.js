@@ -190,7 +190,7 @@ export const seedFirestore = async () => {
     // Other
     { name: 'Main Cafeteria', type: 'landmark', building: 'Main Campus', floor: 0, description: 'College main cafeteria', coordinates: { x: 100, y: 50, z: 0 }, connectedTo: [], tags: ['cafeteria', 'food', 'dining'], isAccessible: true },
     { name: 'College Bakery', type: 'landmark', building: 'Main Campus', floor: 0, description: 'College bakery and snacks', coordinates: { x: 110, y: 55, z: 0 }, connectedTo: [], tags: ['bakery', 'food', 'snacks'], isAccessible: true },
-    { name: 'Main Library', type: 'building', building: 'Library Block', floor: 0, description: 'College main library', coordinates: { x: 80, y: 30, z: 0 }, connectedTo: [], tags: ['library', 'books', 'study'], isAccessible: true },
+    { name: 'Main Library', type: 'building', building: 'BSN Block', floor: 0, description: 'College main library', coordinates: { x: 80, y: 30, z: 0 }, connectedTo: [], tags: ['library', 'books', 'study'], isAccessible: true },
   ];
 
   try {
