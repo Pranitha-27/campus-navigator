@@ -89,10 +89,13 @@ export default function NavigationHomeScreen({ navigation }) {
         </View>
       ) : results.length > 0 ? (
         <FlatList
-          data={results}
+          // ✅ Filtering out duplicates by matching the first instance of each name
+          data={results.filter((item, index, self) => 
+            index === self.findIndex((t) => t.name === item.name)
+          )}
           renderItem={renderLocationItem}
-          // ✅ Firebase uses 'id' not '_id'
-          keyExtractor={(item) => item.id}
+          // Firebase uses 'id' not '_id'
+          keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
           contentContainerStyle={styles.listContainer}
         />
       ) : searchQuery && !loading ? (
