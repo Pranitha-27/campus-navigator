@@ -56,16 +56,7 @@ const FEATURES = [
     screen: 'VoiceSettings',
     color: '#A8E6CF',
     gradient: ['#A8E6CF22', '#4ECDC411'],
-  },
-  {
-    icon: 'map',
-    iconLib: 'Ionicons',
-    label: 'Browse Map',
-    desc: 'Explore campus layout',
-    screen: 'NavigationHome',
-    color: '#C5A3FF',
-    gradient: ['#C5A3FF22', '#8B5CF611'],
-  },
+  }
 ];
 
 const FeatureCard = ({ feature, onPress, delay }) => {
