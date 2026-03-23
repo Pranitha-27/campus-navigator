@@ -50,7 +50,6 @@
         }
       ],
       "expo-barcode-scanner",
-<<<<<<< HEAD
       "expo-web-browser",
       [
         "expo-camera",
@@ -63,7 +62,6 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow Campus Navigator to use your location for real-time navigation.",
           "locationWhenInUsePermission": "Allow Campus Navigator to use your location for real-time navigation."
-=======
       [
         "expo-camera",
         {
@@ -74,7 +72,6 @@
         "expo-sensors",
         {
           "motionPermission": "Allow Campus Navigator to use device motion for AR compass heading."
->>>>>>> aa2f81e0d91b418f69d8dc2cac50178c13cb758a
         }
       ]
     ],
