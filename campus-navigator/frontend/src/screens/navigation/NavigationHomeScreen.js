@@ -135,8 +135,12 @@ export default function NavigationHomeScreen({ navigation }) {
         </View>
       ) : (
         <FlatList
-          data={results}
+          // ✅ Filtering out duplicates by matching the first instance of each name
+          data={results.filter((item, index, self) => 
+            index === self.findIndex((t) => t.name === item.name)
+          )}
           renderItem={renderLocationItem}
+<<<<<<< HEAD
           keyExtractor={(item) => item.id}
           style={styles.list}
           contentContainerStyle={styles.listContent}
@@ -148,6 +152,11 @@ export default function NavigationHomeScreen({ navigation }) {
               <Text style={styles.emptySubText}>Try a different search term</Text>
             </View>
           }
+=======
+          // Firebase uses 'id' not '_id'
+          keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+          contentContainerStyle={styles.listContainer}
+>>>>>>> aa2f81e0d91b418f69d8dc2cac50178c13cb758a
         />
       )}
     </Screen>

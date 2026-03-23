@@ -9,7 +9,12 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Used for AR navigation overlays and QR code scanning.",
+        "NSMotionUsageDescription": "Used for compass heading in AR navigation.",
+        "NSSpeechRecognitionUsageDescription": "Used for voice-guided navigation."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +24,12 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.VIBRATE",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "output": "static",
@@ -40,6 +50,7 @@
         }
       ],
       "expo-barcode-scanner",
+<<<<<<< HEAD
       "expo-web-browser",
       [
         "expo-camera",
@@ -52,6 +63,18 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow Campus Navigator to use your location for real-time navigation.",
           "locationWhenInUsePermission": "Allow Campus Navigator to use your location for real-time navigation."
+=======
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Campus Navigator to use your camera for AR navigation and QR scanning."
+        }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Allow Campus Navigator to use device motion for AR compass heading."
+>>>>>>> aa2f81e0d91b418f69d8dc2cac50178c13cb758a
         }
       ]
     ],
