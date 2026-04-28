@@ -284,9 +284,9 @@ export default function LiveNavigationScreen({ navigation, route }) {
 
     setDirections(steps);
 
-    // Auto-advance current step
-    const firstUndonе = steps.findIndex(s => !s.done);
-    setCurrentStep(firstUndonе === -1 ? steps.length - 1 : firstUndonе);
+    // FIX: Removed the invisible Cyrillic 'е' character here!
+    const firstUndone = steps.findIndex(s => !s.done);
+    setCurrentStep(firstUndone === -1 ? steps.length - 1 : firstUndone);
   }, [destination]);
 
   // ── Subscribe to presence heatmap ────────────────────────────────────────

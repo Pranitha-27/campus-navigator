@@ -3,17 +3,6 @@
 
 import React, { useRef, useEffect } from 'react';
 import {
-<<<<<<< HEAD
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  StatusBar,
-  ScrollView,
-} from 'react-native';
-import Screen from '../components/Screen';
-import { COLORS, SPACING } from '../config';
-=======
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
   Animated, Dimensions, Platform, StatusBar
 } from 'react-native';
@@ -67,7 +56,16 @@ const FEATURES = [
     screen: 'VoiceSettings',
     color: '#A8E6CF',
     gradient: ['#A8E6CF22', '#4ECDC411'],
-  }
+  },
+  {
+    icon: 'map',
+    iconLib: 'Ionicons',
+    label: 'Browse Map',
+    desc: 'Explore campus layout',
+    screen: 'NavigationHome',
+    color: '#C5A3FF',
+    gradient: ['#C5A3FF22', '#8B5CF611'],
+  },
 ];
 
 const FeatureCard = ({ feature, onPress, delay }) => {
@@ -90,7 +88,6 @@ const FeatureCard = ({ feature, onPress, delay }) => {
     </Animated.View>
   );
 };
->>>>>>> aa2f81e0d91b418f69d8dc2cac50178c13cb758a
 
 export default function HomeScreen({ navigation }) {
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -100,88 +97,6 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   return (
-<<<<<<< HEAD
-    <Screen style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Campus Navigator</Text>
-          <Text style={styles.subtitle}>Navigate your campus with ease</Text>
-        </View>
-
-        {/* Buttons */}
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.primaryButton]}
-            onPress={() => navigation.navigate('NavigationHome')}
-          >
-            <Text style={styles.buttonIcon}>🗺️</Text>
-            <Text style={styles.buttonTitle}>Navigate Campus</Text>
-            <Text style={styles.buttonSubtitle}>
-              Find labs, rooms, and locations
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.mapButton]}
-            onPress={() => navigation.navigate('BuildingMap')}
-          >
-            <Text style={styles.buttonIcon}>🏢</Text>
-            <Text style={styles.buttonTitle}>Building Map</Text>
-            <Text style={styles.buttonSubtitle}>
-              View floor plans for all floors
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.qrButton]}
-            onPress={() => navigation.navigate('QRScanner')}
-          >
-            <Text style={styles.buttonIcon}>📷</Text>
-            <Text style={styles.buttonTitle}>Scan QR Code</Text>
-            <Text style={styles.buttonSubtitle}>
-              Scan a room QR code to navigate instantly
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.tertiaryButton]}
-            onPress={() => alert('Coming soon!')}
-          >
-            <Text style={styles.buttonIcon}>⭐</Text>
-            <Text style={styles.buttonTitle}>My Favorites</Text>
-            <Text style={styles.buttonSubtitle}>
-              Quick access to saved locations
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.liveButton]}
-            onPress={() => navigation.navigate('LiveNavigation')}
-          >
-            <Text style={styles.buttonIcon}>📡</Text>
-            <Text style={styles.buttonTitle}>Live Navigation</Text>
-            <Text style={styles.buttonSubtitle}>
-              GPS tracking + crowd heatmap
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Footer */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            Made with ❤️ for easier campus life
-          </Text>
-        </View>
-      </ScrollView>
-    </Screen>
-=======
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <LinearGradient colors={['#0A0E1A', '#0F172A']} style={StyleSheet.absoluteFillObject} />
@@ -255,7 +170,6 @@ export default function HomeScreen({ navigation }) {
         <View style={{ height: 40 }} />
       </ScrollView>
     </View>
->>>>>>> aa2f81e0d91b418f69d8dc2cac50178c13cb758a
   );
 }
 
@@ -271,69 +185,6 @@ const styles = StyleSheet.create({
     width: 48, height: 48, borderRadius: 24, backgroundColor: '#00C6FF11',
     borderWidth: 1, borderColor: '#00C6FF44', alignItems: 'center', justifyContent: 'center',
   },
-<<<<<<< HEAD
-  scroll: {
-    flex: 1,                  // ✅ key fix
-  },
-  scrollContent: {
-    flexGrow: 1,              // ✅ key fix for web
-    paddingBottom: 24,
-  },
-  header: {
-    padding: SPACING.lg,
-    paddingTop: SPACING.xl,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: COLORS.black,
-    marginBottom: SPACING.sm,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: COLORS.gray,
-  },
-  buttonsContainer: {
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.md,
-    gap: SPACING.md,
-  },
-  button: {
-    padding: SPACING.lg,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  primaryButton:  { backgroundColor: COLORS.primary },
-  mapButton:      { backgroundColor: '#059669' },
-  qrButton:       { backgroundColor: '#1C1C1E' },
-  tertiaryButton: { backgroundColor: COLORS.secondary },
-  buttonIcon:     { fontSize: 40, marginBottom: SPACING.sm },
-  buttonTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: COLORS.white,
-    marginBottom: SPACING.xs,
-  },
-  buttonSubtitle: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
-  footer: {
-    padding: SPACING.lg,
-    paddingTop: SPACING.xl,
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 14,
-    color: COLORS.gray,
-  },
-  liveButton: { backgroundColor: '#EF4444' }
-=======
   appName: { color: '#fff', fontSize: 20, fontWeight: '800', letterSpacing: 0.3 },
   appSub: { color: '#445', fontSize: 12, marginTop: 2 },
   welcomeText: { color: '#667', fontSize: 15 },
@@ -355,5 +206,4 @@ const styles = StyleSheet.create({
   },
   statusVal: { color: '#fff', fontSize: 13, fontWeight: '700' },
   statusLbl: { color: '#445', fontSize: 10, textAlign: 'center' },
->>>>>>> aa2f81e0d91b418f69d8dc2cac50178c13cb758a
 });

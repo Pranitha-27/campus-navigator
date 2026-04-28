@@ -1,10 +1,6 @@
-// src/services/voiceGuidanceService.js
-// Full voice guidance service using expo-speech
-
 import * as Speech from 'expo-speech';
 import { Platform } from 'react-native';
 
-// Voice profiles
 export const VOICE_PROFILES = {
   default: { language: 'en-IN', pitch: 1.0, rate: 0.9 },
   fast: { language: 'en-IN', pitch: 1.0, rate: 1.2 },
@@ -12,7 +8,6 @@ export const VOICE_PROFILES = {
   friendly: { language: 'en-IN', pitch: 1.1, rate: 0.85 },
 };
 
-// Announcement templates
 const TEMPLATES = {
   start: (dest) => `Starting navigation to ${dest}. Follow the on-screen directions.`,
   step: (instruction) => instruction,
@@ -32,7 +27,7 @@ class VoiceGuidanceService {
     this.queue = [];
     this.isSpeaking = false;
     this.lastSpoken = null;
-    this.debounceMs = 2000; // Prevent duplicate announcements
+    this.debounceMs = 2000;
   }
 
   setEnabled(val) {
@@ -69,47 +64,27 @@ class VoiceGuidanceService {
     }
   }
 
-  speak(text, priority = false) {
+  // FIX: Converted priority speech logic to async/await instead of .then() 
+  // because Speech.stop() may not return a promise on older platforms.
+  async speak(text, priority = false) {
     if (priority) {
       this.queue = [text, ...this.queue];
-      Speech.stop().then(() => this._processQueue());
+      await Speech.stop();
+      this._processQueue();
     } else {
       if (!this.isSpeaking) this._speak(text);
       else this.queue.push(text);
     }
   }
 
-  announceStart(destination) {
-    this.speak(TEMPLATES.start(destination), true);
-  }
-
-  announceStep(instruction) {
-    this.speak(TEMPLATES.step(instruction));
-  }
-
-  announceApproaching(distance, landmark) {
-    this.speak(TEMPLATES.approaching(distance, landmark));
-  }
-
-  announceArrival(destination) {
-    this.speak(TEMPLATES.arrived(destination), true);
-  }
-
-  announceRecalculating() {
-    this.speak(TEMPLATES.recalculating(), true);
-  }
-
-  announceFloorChange(floorNumber) {
-    this.speak(TEMPLATES.floor(floorNumber));
-  }
-
-  announceCrowded(area) {
-    this.speak(TEMPLATES.crowded(area));
-  }
-
-  announceSOS() {
-    this.speak(TEMPLATES.sos(), true);
-  }
+  announceStart(destination) { this.speak(TEMPLATES.start(destination), true); }
+  announceStep(instruction) { this.speak(TEMPLATES.step(instruction)); }
+  announceApproaching(distance, landmark) { this.speak(TEMPLATES.approaching(distance, landmark)); }
+  announceArrival(destination) { this.speak(TEMPLATES.arrived(destination), true); }
+  announceRecalculating() { this.speak(TEMPLATES.recalculating(), true); }
+  announceFloorChange(floorNumber) { this.speak(TEMPLATES.floor(floorNumber)); }
+  announceCrowded(area) { this.speak(TEMPLATES.crowded(area)); }
+  announceSOS() { this.speak(TEMPLATES.sos(), true); }
 
   stop() {
     this.queue = [];
