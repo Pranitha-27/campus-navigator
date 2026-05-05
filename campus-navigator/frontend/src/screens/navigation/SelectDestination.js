@@ -9,7 +9,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from "react-native";
-import { getAllLocations, searchLocations } from "../../services/navigationService";
+import { getAllLocations, searchLocations as searchAPI } from "../../services/navigationService";
 
 export default function SelectDestination({ route, navigation }) {
   const { startLocation } = route.params;
@@ -24,18 +24,20 @@ export default function SelectDestination({ route, navigation }) {
 
   useEffect(() => {
     if (query.length > 1) {
-      searchLocations(query);
+      handleSearch(query);
     } else {
       setResults(allLocations.filter((l) => l.id !== startLocation.id));
     }
-  }, [query]);
+  }, [query, allLocations]);
 
   const loadAllLocations = async () => {
     try {
       setLoading(true);
-      const result = await getAllLocations();
-      const filtered = data.filter((l) => l.id !== startLocation.id);
-      const data = result.data || [];
+      // FIX: getAllLocations returns an array directly, not { data: [] }
+      const data = await getAllLocations();
+      const filtered = (data || []).filter((l) => l.id !== startLocation.id);
+      setAllLocations(data || []);
+      setResults(filtered);
     } catch (err) {
       console.error(err);
     } finally {
@@ -43,11 +45,13 @@ export default function SelectDestination({ route, navigation }) {
     }
   };
 
-  const searchLocations = async (q) => {
+  // FIX: renamed to handleSearch to avoid collision with imported searchLocations
+  const handleSearch = async (q) => {
     try {
       setLoading(true);
-      const result = await searchLocations(q);
-      setResults((result.data || []).filter((l) => l.id !== startLocation.id));
+      // FIX: searchAPI returns array directly, not { data: [] }
+      const data = await searchAPI(q);
+      setResults((data || []).filter((l) => l.id !== startLocation.id));
     } catch (err) {
       console.error(err);
     } finally {
@@ -81,7 +85,6 @@ export default function SelectDestination({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backBtn}>← Back</Text>
@@ -90,13 +93,11 @@ export default function SelectDestination({ route, navigation }) {
         <View style={{ width: 50 }} />
       </View>
 
-      {/* From Banner */}
       <View style={styles.fromBanner}>
         <Text style={styles.fromLabel}>📍 From:</Text>
         <Text style={styles.fromName}>{startLocation.name}</Text>
       </View>
 
-      {/* Search */}
       <View style={styles.searchContainer}>
         <Text style={styles.searchIcon}>🔍</Text>
         <TextInput
@@ -114,17 +115,12 @@ export default function SelectDestination({ route, navigation }) {
         )}
       </View>
 
-      {/* Results */}
       {loading ? (
-        <ActivityIndicator
-          style={{ marginTop: 40 }}
-          size="large"
-          color="#2563EB"
-        />
+        <ActivityIndicator style={{ marginTop: 40 }} size="large" color="#2563EB" />
       ) : (
         <FlatList
           data={results}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id?.toString() || item.name}
           contentContainerStyle={{ padding: 16 }}
           ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
           ListEmptyComponent={
@@ -139,12 +135,7 @@ export default function SelectDestination({ route, navigation }) {
               onPress={() => selectDestination(item)}
             >
               <View style={styles.cardLeft}>
-                <View
-                  style={[
-                    styles.typeBadge,
-                    { backgroundColor: getTypeColor(item.type) + "20" },
-                  ]}
-                >
+                <View style={[styles.typeBadge, { backgroundColor: getTypeColor(item.type) + "20" }]}>
                   <Text style={styles.typeEmoji}>{getTypeEmoji(item.type)}</Text>
                 </View>
               </View>
@@ -167,75 +158,41 @@ export default function SelectDestination({ route, navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F8FAFC" },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E2E8F0",
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+    paddingHorizontal: 16, paddingVertical: 12, backgroundColor: "#fff",
+    borderBottomWidth: 1, borderBottomColor: "#E2E8F0",
   },
   backBtn: { fontSize: 16, color: "#2563EB", fontWeight: "600" },
   headerTitle: { fontSize: 18, fontWeight: "700", color: "#1E293B" },
-
   fromBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#EFF6FF",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#BFDBFE",
+    flexDirection: "row", alignItems: "center", backgroundColor: "#EFF6FF",
+    paddingHorizontal: 16, paddingVertical: 10,
+    borderBottomWidth: 1, borderBottomColor: "#BFDBFE",
   },
   fromLabel: { fontSize: 13, color: "#3B82F6", fontWeight: "600", marginRight: 6 },
   fromName: { fontSize: 13, color: "#1E40AF", fontWeight: "700" },
-
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    margin: 16,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    flexDirection: "row", alignItems: "center", margin: 16, backgroundColor: "#fff",
+    borderRadius: 12, paddingHorizontal: 12, borderWidth: 1, borderColor: "#E2E8F0",
+    shadowColor: "#000", shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
   },
   searchIcon: { fontSize: 16, marginRight: 8 },
   searchInput: { flex: 1, height: 44, fontSize: 15, color: "#1E293B" },
   clearBtn: { fontSize: 16, color: "#94A3B8", padding: 4 },
-
   locationCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 14,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    flexDirection: "row", alignItems: "center", backgroundColor: "#fff",
+    borderRadius: 12, padding: 14, shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05,
+    shadowRadius: 4, elevation: 2,
   },
   cardLeft: { marginRight: 12 },
-  typeBadge: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  typeBadge: { width: 44, height: 44, borderRadius: 12, justifyContent: "center", alignItems: "center" },
   typeEmoji: { fontSize: 20 },
   cardContent: { flex: 1 },
   locationName: { fontSize: 15, fontWeight: "600", color: "#1E293B" },
   locationMeta: { fontSize: 12, color: "#64748B", marginTop: 2 },
   chevron: { fontSize: 22, color: "#CBD5E1" },
-
   empty: { alignItems: "center", marginTop: 60 },
   emptyIcon: { fontSize: 48, marginBottom: 12 },
   emptyText: { fontSize: 16, color: "#94A3B8" },

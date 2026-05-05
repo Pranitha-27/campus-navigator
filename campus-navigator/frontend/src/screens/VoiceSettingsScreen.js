@@ -1,5 +1,3 @@
-// src/screens/settings/VoiceSettingsScreen.js
-
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, Switch,
@@ -8,7 +6,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider';
-import voiceGuidance, { VOICE_PROFILES } from '../services/voiceGuidanceService.js';
+// FIX: correct relative path (VoiceSettingsScreen is in src/screens/, service is in src/services/)
+import voiceGuidance, { VOICE_PROFILES } from '../services/voiceGuidanceService';
 
 const PROFILE_OPTIONS = [
   { key: 'default', label: 'Standard', icon: 'person', desc: 'Normal pace, clear voice' },
@@ -17,11 +16,26 @@ const PROFILE_OPTIONS = [
   { key: 'friendly', label: 'Friendly', icon: 'happy', desc: 'Warm and encouraging tone' },
 ];
 
+// FIX: Extracted announcement items to a constant so useState is NOT called inside .map()
+// Calling useState inside .map() is an invalid hook call and crashes React
+const ANNOUNCEMENT_ITEMS = [
+  { label: 'Direction change', icon: 'git-branch', defaultOn: true },
+  { label: 'Approaching turn', icon: 'navigate', defaultOn: true },
+  { label: 'Floor change', icon: 'layers', defaultOn: true },
+  { label: 'Crowded areas', icon: 'people', defaultOn: false },
+  { label: 'Arrival', icon: 'flag', defaultOn: true },
+];
+
 export default function VoiceSettingsScreen({ navigation }) {
   const [enabled, setEnabled] = useState(voiceGuidance.enabled);
   const [selectedProfile, setSelectedProfile] = useState('default');
   const [pitch, setPitch] = useState(1.0);
   const [rate, setRate] = useState(0.9);
+
+  // FIX: All announcement toggles declared at top level as a single state object
+  const [announcementToggles, setAnnouncementToggles] = useState(
+    Object.fromEntries(ANNOUNCEMENT_ITEMS.map(i => [i.label, i.defaultOn]))
+  );
 
   useEffect(() => {
     voiceGuidance.setEnabled(enabled);
@@ -35,8 +49,15 @@ export default function VoiceSettingsScreen({ navigation }) {
     voiceGuidance.setProfile(profileKey);
   };
 
+  const toggleAnnouncement = (label) => {
+    setAnnouncementToggles(prev => ({ ...prev, [label]: !prev[label] }));
+  };
+
   const testVoice = () => {
-    voiceGuidance.speak("Turn left at the corridor, near the notice board. You are 20 metres from your destination.", true);
+    voiceGuidance.speak(
+      "Turn left at the corridor, near the notice board. You are 20 metres from your destination.",
+      true
+    );
   };
 
   return (
@@ -81,13 +102,15 @@ export default function VoiceSettingsScreen({ navigation }) {
               disabled={!enabled}
             >
               <Ionicons name={p.icon} size={26} color={selectedProfile === p.key ? '#00C6FF' : '#445'} />
-              <Text style={[styles.profileLabel, selectedProfile === p.key && { color: '#00C6FF' }]}>{p.label}</Text>
+              <Text style={[styles.profileLabel, selectedProfile === p.key && { color: '#00C6FF' }]}>
+                {p.label}
+              </Text>
               <Text style={styles.profileDesc}>{p.desc}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Fine Controls */}
+        {/* Fine Tuning */}
         <Text style={styles.sectionTitle}>Fine Tuning</Text>
         <View style={styles.card}>
           <View style={styles.sliderRow}>
@@ -97,15 +120,10 @@ export default function VoiceSettingsScreen({ navigation }) {
           </View>
           <Slider
             style={styles.slider}
-            minimumValue={0.5}
-            maximumValue={2.0}
-            step={0.1}
-            value={pitch}
-            onValueChange={setPitch}
-            minimumTrackTintColor="#00C6FF"
-            maximumTrackTintColor="#1A2235"
-            thumbTintColor="#00C6FF"
-            disabled={!enabled}
+            minimumValue={0.5} maximumValue={2.0} step={0.1}
+            value={pitch} onValueChange={setPitch}
+            minimumTrackTintColor="#00C6FF" maximumTrackTintColor="#1A2235"
+            thumbTintColor="#00C6FF" disabled={!enabled}
           />
           <View style={styles.sliderRow}>
             <Ionicons name="speedometer" size={18} color="#FFE66D" />
@@ -114,45 +132,32 @@ export default function VoiceSettingsScreen({ navigation }) {
           </View>
           <Slider
             style={styles.slider}
-            minimumValue={0.5}
-            maximumValue={1.5}
-            step={0.1}
-            value={rate}
-            onValueChange={setRate}
-            minimumTrackTintColor="#FFE66D"
-            maximumTrackTintColor="#1A2235"
-            thumbTintColor="#FFE66D"
-            disabled={!enabled}
+            minimumValue={0.5} maximumValue={1.5} step={0.1}
+            value={rate} onValueChange={setRate}
+            minimumTrackTintColor="#FFE66D" maximumTrackTintColor="#1A2235"
+            thumbTintColor="#FFE66D" disabled={!enabled}
           />
         </View>
 
         {/* Announcement Types */}
         <Text style={styles.sectionTitle}>Announce When</Text>
         <View style={styles.card}>
-          {[
-            { label: 'Direction change', icon: 'git-branch', defaultOn: true },
-            { label: 'Approaching turn', icon: 'navigate', defaultOn: true },
-            { label: 'Floor change', icon: 'layers', defaultOn: true },
-            { label: 'Crowded areas', icon: 'people', defaultOn: false },
-            { label: 'Arrival', icon: 'flag', defaultOn: true },
-          ].map((item, i) => {
-            const [on, setOn] = useState(item.defaultOn);
-            return (
-              <View key={i} style={[styles.toggleRow, i > 0 && styles.borderTop]}>
-                <View style={styles.toggleLeft}>
-                  <Ionicons name={item.icon} size={18} color="#667" />
-                  <Text style={styles.toggleTitle}>{item.label}</Text>
-                </View>
-                <Switch
-                  value={on}
-                  onValueChange={setOn}
-                  trackColor={{ false: '#1A2235', true: '#00C6FF44' }}
-                  thumbColor={on ? '#00C6FF' : '#334'}
-                  disabled={!enabled}
-                />
+          {/* FIX: No useState inside .map() — use announcementToggles state object instead */}
+          {ANNOUNCEMENT_ITEMS.map((item, i) => (
+            <View key={item.label} style={[styles.toggleRow, i > 0 && styles.borderTop]}>
+              <View style={styles.toggleLeft}>
+                <Ionicons name={item.icon} size={18} color="#667" />
+                <Text style={styles.toggleTitle}>{item.label}</Text>
               </View>
-            );
-          })}
+              <Switch
+                value={announcementToggles[item.label]}
+                onValueChange={() => toggleAnnouncement(item.label)}
+                trackColor={{ false: '#1A2235', true: '#00C6FF44' }}
+                thumbColor={announcementToggles[item.label] ? '#00C6FF' : '#334'}
+                disabled={!enabled}
+              />
+            </View>
+          ))}
         </View>
 
         {/* Test Button */}
@@ -180,7 +185,10 @@ const styles = StyleSheet.create({
   backBtn: { padding: 8, borderRadius: 20, backgroundColor: '#1A2235' },
   headerTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
   content: { padding: 16, paddingBottom: 40 },
-  sectionTitle: { color: '#556', fontSize: 12, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase', marginTop: 20, marginBottom: 10, marginLeft: 4 },
+  sectionTitle: {
+    color: '#556', fontSize: 12, fontWeight: '700', letterSpacing: 1,
+    textTransform: 'uppercase', marginTop: 20, marginBottom: 10, marginLeft: 4,
+  },
   card: { backgroundColor: '#0F172A', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#1A2235' },
   toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8 },
   borderTop: { borderTopWidth: 1, borderTopColor: '#1A2235' },
@@ -189,7 +197,7 @@ const styles = StyleSheet.create({
   toggleDesc: { color: '#556', fontSize: 12, marginTop: 2 },
   profileGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   profileCard: {
-    width: (320 - 10) / 2, backgroundColor: '#0F172A', borderRadius: 14, padding: 14,
+    width: '47%', backgroundColor: '#0F172A', borderRadius: 14, padding: 14,
     borderWidth: 1, borderColor: '#1A2235', alignItems: 'center', gap: 6,
   },
   profileCardActive: { borderColor: '#00C6FF', backgroundColor: '#00C6FF11' },
